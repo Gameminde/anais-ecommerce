@@ -115,7 +115,7 @@ export default function HomePage() {
             />
 
             <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-light drop-shadow-lg max-w-xs sm:max-w-sm md:max-w-none">
-              Up to 50% off this Season
+              Élégance moderne pour la femme algérienne
             </div>
           </div>
 
@@ -210,45 +210,13 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Collection Banners - Mobile Optimized */}
-      <section className="py-8 sm:py-12 bg-gray-50">
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-            {/* MOE Collection */}
-            <Link to="/shop" className="group relative overflow-hidden rounded-lg bg-gradient-to-r from-anais-taupe to-deep-plum text-white p-6 sm:p-8 min-h-[120px] sm:min-h-[140px] flex items-center">
-              <div className="relative z-10 w-full">
-                <h3 className="font-display text-xl sm:text-2xl mb-2">MOE collection</h3>
-                <p className="text-white/90 mb-3 sm:mb-4 text-sm sm:text-base">Shop the Collection</p>
-                <div className="flex items-center text-white font-medium">
-                  <span>Shop Now</span>
-                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                </div>
-              </div>
-              <div className="absolute inset-0 bg-black/10"></div>
-            </Link>
-
-            {/* New Bags */}
-            <Link to="/shop" className="group relative overflow-hidden rounded-lg bg-gradient-to-r from-antique-gold to-anais-taupe text-white p-6 sm:p-8 min-h-[120px] sm:min-h-[140px] flex items-center">
-              <div className="relative z-10 w-full">
-                <h3 className="font-display text-xl sm:text-2xl mb-2">new bags</h3>
-                <p className="text-white/90 mb-3 sm:mb-4 text-sm sm:text-base">Shop New Arrivals</p>
-                <div className="flex items-center text-white font-medium">
-                  <span>Shop Now</span>
-                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                </div>
-              </div>
-              <div className="absolute inset-0 bg-black/10"></div>
-            </Link>
-          </div>
-        </div>
-      </section>
 
       {/* Collections Dynamiques - Basé sur les produits en base */}
       {featuredEnsembles.length > 0 && (
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
             <SplitText
-              text="nos collections"
+              text="nos catégories"
               className="font-display text-3xl text-center text-charcoal mb-12"
               direction="up"
               delay={0.3}
@@ -256,46 +224,46 @@ export default function HomePage() {
             />
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              {/* Collection 1 - Produits récents */}
+              {/* Collection 1 - Abayas */}
               <Link to="/shop" className="group text-center">
-                <div className="aspect-square bg-gradient-to-br from-yellow-100 to-orange-200 rounded-lg mb-4 relative overflow-hidden">
+                <div className="aspect-square bg-gradient-to-br from-emerald-100 to-teal-200 rounded-lg mb-4 relative overflow-hidden">
                   <div className="absolute inset-0 bg-black/10"></div>
                   <div className="absolute bottom-4 left-4 right-4 text-white">
-                    <h3 className="font-display text-lg mb-1">Nouveautés</h3>
-                    <p className="text-xs opacity-90">{featuredEnsembles.length} produits</p>
+                    <h3 className="font-display text-lg mb-1">Abayas</h3>
+                    <p className="text-xs opacity-90">Élégance traditionnelle</p>
                   </div>
                 </div>
               </Link>
 
-              {/* Collection 2 - Meilleures ventes (simulé) */}
+              {/* Collection 2 - Robes modernes */}
               <Link to="/shop" className="group text-center">
-                <div className="aspect-square bg-gradient-to-br from-purple-900 to-blue-900 rounded-lg mb-4 relative overflow-hidden">
+                <div className="aspect-square bg-gradient-to-br from-rose-100 to-pink-200 rounded-lg mb-4 relative overflow-hidden">
                   <div className="absolute inset-0 bg-black/10"></div>
                   <div className="absolute bottom-4 left-4 right-4 text-white">
-                    <h3 className="font-display text-lg mb-1">Best Sellers</h3>
-                    <p className="text-xs opacity-90">Populaires</p>
+                    <h3 className="font-display text-lg mb-1">Robes</h3>
+                    <p className="text-xs opacity-90">Moderne & Raffinée</p>
                   </div>
                 </div>
               </Link>
 
-              {/* Collection 3 - Promotions (si applicable) */}
+              {/* Collection 3 - Hijabs */}
               <Link to="/shop" className="group text-center">
-                <div className="aspect-square bg-gradient-to-br from-pink-100 to-rose-200 rounded-lg mb-4 relative overflow-hidden">
+                <div className="aspect-square bg-gradient-to-br from-violet-100 to-purple-200 rounded-lg mb-4 relative overflow-hidden">
                   <div className="absolute inset-0 bg-black/10"></div>
                   <div className="absolute bottom-4 left-4 right-4 text-white">
-                    <h3 className="font-display text-lg mb-1">Promotions</h3>
-                    <p className="text-xs opacity-90">Économisez</p>
+                    <h3 className="font-display text-lg mb-1">Hijabs</h3>
+                    <p className="text-xs opacity-90">Style & Confort</p>
                   </div>
                 </div>
               </Link>
 
-              {/* Collection 4 - Tous les produits */}
+              {/* Collection 4 - Accessoires */}
               <Link to="/shop" className="group text-center">
-                <div className="aspect-square bg-gradient-to-br from-gray-800 to-gray-600 rounded-lg mb-4 relative overflow-hidden">
+                <div className="aspect-square bg-gradient-to-br from-amber-100 to-orange-200 rounded-lg mb-4 relative overflow-hidden">
                   <div className="absolute inset-0 bg-black/10"></div>
                   <div className="absolute bottom-4 left-4 right-4 text-white">
-                    <h3 className="font-display text-lg mb-1">Collection Complète</h3>
-                    <p className="text-xs opacity-90">Voir tout</p>
+                    <h3 className="font-display text-lg mb-1">Accessoires</h3>
+                    <p className="text-xs opacity-90">Touches finales</p>
                   </div>
                 </div>
               </Link>
@@ -372,33 +340,6 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* SALE Banner */}
-      <section className="py-12 bg-anais-taupe text-white">
-        <div className="container mx-auto px-4 text-center">
-          <SplitText
-            text="Discover the best deal"
-            className="font-display text-3xl mb-4"
-            direction="up"
-            delay={0.3}
-            type="words"
-          />
-
-          <SplitText
-            text="SALE up to 50% for all collections"
-            className="font-display text-2xl mb-6"
-            direction="down"
-            delay={0.8}
-            type="words"
-          />
-
-          <Link
-            to="/shop"
-            className="inline-block bg-white text-anais-taupe font-body font-bold px-8 py-4 rounded-lg hover:bg-antique-gold hover:text-white transition-all duration-300"
-          >
-            Check Now
-          </Link>
-        </div>
-      </section>
 
       {/* Call to Action Section */}
       <section className="py-16 bg-white">
@@ -425,20 +366,20 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* TikTok Inspiration */}
+      {/* Sélection ANAIS */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <SplitText
-              text="Tik Tok"
-              className="font-display text-3xl text-charcoal mb-12"
+              text="Sélection ANAIS"
+              className="font-display text-3xl text-charcoal mb-4"
               direction="left"
               delay={0.3}
               type="words"
             />
             <SplitText
-              text="Inspiration"
-              className="font-display text-2xl text-charcoal mb-8"
+              text="Tendances & Élégance"
+              className="font-display text-2xl text-charcoal"
               direction="right"
               delay={0.8}
               type="words"
@@ -508,12 +449,12 @@ export default function HomePage() {
       </section>
 
 
-      {/* Brand Quote Section */}
+      {/* À propos ANAIS */}
       <section className="py-16 bg-gradient-to-r from-anais-taupe to-deep-plum text-white">
         <div className="container mx-auto px-4 text-center">
           <blockquote className="font-body text-lg max-w-3xl mx-auto mb-8">
             <SplitText
-              text="A brand that challenges the industry. A brand that has a chance to stage a revolution. A brand whose creators see it as a step towards a better world"
+              text="ANAIS incarne l'élégance moderne de la femme algérienne. Chaque pièce est conçue pour célébrer la grâce, la force et la beauté naturelle de nos femmes."
               className="font-body text-lg max-w-3xl mx-auto mb-8"
               direction="up"
               delay={0.3}
@@ -523,13 +464,13 @@ export default function HomePage() {
           </blockquote>
 
           <p className="text-white/90 mb-8">
-            "Get ready to slay in style with our Fashion store - the ultimate destination for all things fabulous!"
+            "Découvrez une mode qui vous ressemble, conçue pour votre quotidien avec l'élégance qui vous caractérise."
           </p>
           <Link
             to="/about"
             className="inline-flex items-center space-x-2 bg-white text-anais-taupe font-body font-bold px-8 py-4 rounded-lg hover:bg-antique-gold hover:text-white transition-all duration-300"
           >
-            <span>Join us</span>
+            <span>Notre histoire</span>
             <ArrowRight className="w-5 h-5" />
           </Link>
         </div>
