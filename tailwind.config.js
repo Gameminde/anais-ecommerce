@@ -30,6 +30,8 @@ module.exports = {
 				'success-green': '#7A9B76',
 				'info-blue': '#7A8C9B',
 				'alert-rose': '#B87B7B',
+				'anais-gold': '#D4AF37',
+				'anais-gold-dark': '#B8941F',
 				
 				// Shadcn compatibility
 				border: 'hsl(var(--border))',

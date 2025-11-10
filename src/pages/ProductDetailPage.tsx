@@ -5,6 +5,8 @@ import { ShoppingCart, Check, Sparkles } from 'lucide-react'
 import { supabase, Product } from '../lib/supabase'
 import { useCart } from '../contexts/CartContext'
 import { useAuth } from '../contexts/AuthContext'
+import { trackEvent } from '../utils/analytics'
+import { OptimizedImage } from '../components/ui/OptimizedImage'
 
 export default function ProductDetailPage() {
   const { id } = useParams()
@@ -28,20 +30,57 @@ export default function ProductDetailPage() {
   const fetchProduct = async () => {
     setLoading(true)
     try {
-      const { data, error } = await supabase
+      console.log('🔍 ProductDetailPage: Fetching product with images for ID:', id)
+
+      // Fetch product without images first
+      const { data: productData, error: productError } = await supabase
         .from('products')
         .select('*')
         .eq('id', id)
         .maybeSingle()
 
-      if (error) throw error
-      if (data) {
-        setProduct(data)
-        if (data.sizes && data.sizes.length > 0) setSelectedSize(data.sizes[0])
-        if (data.colors && data.colors.length > 0) setSelectedColor(data.colors[0])
+      if (productError) {
+        console.error('Error fetching product:', productError)
+        setLoading(false)
+        return
+      }
+
+      if (productData) {
+        // Fetch images separately
+        const { data: imagesData, error: imagesError } = await supabase
+          .from('product_images')
+          .select('*')
+          .eq('product_id', id)
+          .order('display_order')
+
+        if (imagesError) {
+          console.warn('Error fetching product images:', imagesError)
+        }
+
+        // Combine product with images
+        const productWithImages = {
+          ...productData,
+          product_images: imagesData || []
+        }
+
+        setProduct(productWithImages)
+        console.log('✅ ProductDetailPage: Loaded product with', imagesData?.length || 0, 'images')
+
+        // Track view product event
+        trackEvent('view_product', {
+          productId: id,
+          productName: productData.name_en,
+          price: productData.price_dzd
+        })
+
+        // Set default selections
+        if (productData.sizes && productData.sizes.length > 0) setSelectedSize(productData.sizes[0])
+        if (productData.colors && productData.colors.length > 0) setSelectedColor(productData.colors[0])
+      } else {
+        console.log('ℹ️ ProductDetailPage: Product not found')
       }
     } catch (error) {
-      console.error('Error fetching product:', error)
+      console.error('Exception in fetchProduct:', error)
     } finally {
       setLoading(false)
     }
@@ -98,11 +137,21 @@ export default function ProductDetailPage() {
           {/* Product Image */}
           <div className="bg-white rounded-2xl overflow-hidden shadow-lg">
             <div className="aspect-[3/4] bg-warm-gray/10 relative">
-              <div className="w-full h-full flex items-center justify-center">
-                <div className="w-40 h-40 bg-anais-taupe/20 rounded-full flex items-center justify-center">
-                  <Sparkles className="w-20 h-20 text-anais-taupe" />
+              {product.product_images && product.product_images.length > 0 ? (
+                <OptimizedImage
+                  src={product.product_images.find(img => img.is_primary)?.image_url || product.product_images[0].image_url}
+                  alt={product.name_en}
+                  className="w-full h-full object-cover object-center"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-anais-taupe/10 to-anais-gold/10">
+                  <div className="text-center">
+                    <Sparkles className="w-24 h-24 text-anais-taupe mx-auto mb-4" />
+                    <div className="text-sm text-anais-taupe font-medium">ANAIS</div>
+                    <div className="text-sm text-gray-500 mt-2">{product.name_en}</div>
+                  </div>
                 </div>
-              </div>
+              )}
               {product.is_featured && (
                 <div className="absolute top-6 right-6 bg-antique-gold text-white px-4 py-2 rounded-full font-bold">
                   Featured

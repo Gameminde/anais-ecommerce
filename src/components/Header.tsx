@@ -1,15 +1,68 @@
-import { Link } from 'react-router-dom'
-import { ShoppingCart, User, Menu, X, Globe } from 'lucide-react'
-import { useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import { ShoppingCart, User, Menu, X, Globe, Home, ShoppingBag, Package, Heart, Shield } from 'lucide-react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import { useCart } from '../contexts/CartContext'
+import { useAdmin } from '../hooks/useAdmin'
+import { motion, useScroll, useTransform } from 'framer-motion'
+import SplitText from './SplitText'
+import ScrollAnimationWrapper from './ScrollAnimationWrapper'
+
+// Mobile Bottom Navigation Component
+function MobileBottomNav() {
+  const location = useLocation()
+  const { cartCount } = useCart()
+  const { user } = useAuth()
+  const { isAdmin } = useAdmin()
+
+  const navItems = [
+    { icon: Home, label: 'Home', path: '/', active: location.pathname === '/' },
+    { icon: ShoppingBag, label: 'Shop', path: '/shop', active: location.pathname === '/shop' || location.pathname.startsWith('/shop') },
+    { icon: Package, label: 'Boxes', path: '/gift-boxes', active: location.pathname === '/gift-boxes' },
+    { icon: ShoppingCart, label: 'Cart', path: '/cart', active: location.pathname === '/cart', badge: cartCount },
+    { icon: User, label: 'Account', path: user ? '/account' : '/login', active: location.pathname === '/account' || location.pathname === '/login' },
+    ...(isAdmin ? [{ icon: Shield, label: 'Admin', path: '/admin', active: location.pathname.startsWith('/admin') }] : [])
+  ]
+
+  return (
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 safe-area-inset-bottom">
+      <div className="grid grid-cols-5 h-16">
+        {navItems.map(({ icon: Icon, label, path, active, badge }) => (
+          <Link
+            key={path}
+            to={path}
+            className={`flex flex-col items-center justify-center py-2 px-1 relative transition-colors duration-200 ${
+              active
+                ? 'text-anais-taupe'
+                : 'text-gray-500 hover:text-anais-taupe'
+            }`}
+          >
+            <div className="relative">
+              <Icon className="w-5 h-5 mb-1" />
+              {badge && badge > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold">
+                  {badge > 9 ? '9+' : badge}
+                </span>
+              )}
+            </div>
+            <span className="text-xs font-medium">{label}</span>
+          </Link>
+        ))}
+      </div>
+    </nav>
+  )
+}
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { t, i18n } = useTranslation()
   const { user } = useAuth()
   const { cartCount } = useCart()
+  const { isAdmin, loading: adminLoading } = useAdmin()
+
+  // Debug admin status (remove in production)
+  console.log('Header - user:', user?.email, 'isAdmin:', isAdmin)
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng)
@@ -17,136 +70,260 @@ export default function Header() {
 
   const currentLang = i18n.language
 
+  // Scroll-based animations for header
+  const { scrollY } = useScroll()
+  const headerY = useTransform(scrollY, [0, 100], [0, -20])
+  const headerOpacity = useTransform(scrollY, [0, 100], [1, 0.9])
+  const backgroundY = useTransform(scrollY, [0, 300], [0, -150]) // Parallax effect
+
   return (
-    <header className="bg-white border-b border-warm-gray/20 sticky top-0 z-50">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-20">
-          {/* Logo */}
+    <motion.header
+      className="relative h-20 bg-transparent sticky top-0 z-50 overflow-hidden"
+      style={{
+        y: headerY,
+        opacity: headerOpacity
+      }}
+    >
+      {/* Background Image with Parallax */}
+      <motion.div
+        className="absolute inset-0 w-full h-full"
+        style={{ y: backgroundY }}
+      >
+        <img
+          src="/Gemini_Generated_Image_5a9xp45a9xp45a9x.png"
+          alt="ANAIS Fashion Collection"
+          className="w-full h-full object-cover object-center"
+        />
+        {/* Dark overlay for better text readability */}
+        <motion.div
+          className="absolute inset-0 bg-black/40"
+          initial={{ opacity: 0.4 }}
+          whileInView={{ opacity: 0.4 }}
+          transition={{ duration: 0.3 }}
+        />
+      </motion.div>
+
+      {/* Header Content Overlay */}
+      <div className="relative z-10">
+        <div className="container mx-auto px-4">
+          <motion.div
+            className="flex items-center justify-between h-20"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+          {/* Animated Logo */}
           <Link to="/" className="flex items-center">
-            <img src="/logos/anais-logo-primary.svg" alt="ANAIS" className="h-12" />
+            <SplitText
+              text="ANAIS"
+              className="font-display text-xl sm:text-2xl font-bold text-white tracking-wider drop-shadow-lg"
+              direction="right"
+              delay={0.5}
+              duration={0.8}
+              staggerChildren={0.1}
+              type="chars"
+            />
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            <Link to="/" className="font-body text-charcoal hover:text-anais-taupe transition-colors">
-              {t('nav.home')}
-            </Link>
-            <Link to="/shop?type=ensemble" className="font-body text-charcoal hover:text-anais-taupe transition-colors">
-              {t('nav.ensembles')}
-            </Link>
-            <Link to="/shop" className="font-body text-charcoal hover:text-anais-taupe transition-colors">
-              {t('nav.shop')}
-            </Link>
-            <Link to="/gift-boxes" className="font-body text-charcoal hover:text-anais-taupe transition-colors">
-              {t('nav.giftBoxes')}
-            </Link>
-            <Link to="/about" className="font-body text-charcoal hover:text-anais-taupe transition-colors">
-              {t('nav.about')}
-            </Link>
-          </nav>
-
-          {/* Right side actions */}
-          <div className="flex items-center space-x-4">
-            {/* Language Switcher */}
-            <div className="hidden md:flex items-center space-x-2">
-              <Globe className="w-4 h-4 text-warm-gray" />
-              <select
-                value={currentLang}
-                onChange={(e) => changeLanguage(e.target.value)}
-                className="text-sm font-body bg-transparent border-none focus:outline-none text-charcoal cursor-pointer"
+            {/* Desktop Navigation */}
+            <motion.nav
+              className="hidden md:flex items-center space-x-8"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.8 }}
+            >
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <option value="en">EN</option>
-                <option value="ar">AR</option>
-                <option value="fr">FR</option>
-              </select>
-            </div>
+                <Link to="/" className="font-body text-white hover:text-anais-taupe transition-colors drop-shadow-lg relative">
+                  {t('nav.home')}
+                  <motion.div
+                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-anais-taupe"
+                    initial={{ scaleX: 0 }}
+                    whileHover={{ scaleX: 1 }}
+                    transition={{ duration: 0.2 }}
+                  />
+                </Link>
+              </motion.div>
+
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link to="/shop?type=ensemble" className="font-body text-white hover:text-anais-taupe transition-colors drop-shadow-lg relative">
+                  {t('nav.ensembles')}
+                  <motion.div
+                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-anais-taupe"
+                    initial={{ scaleX: 0 }}
+                    whileHover={{ scaleX: 1 }}
+                    transition={{ duration: 0.2 }}
+                  />
+                </Link>
+              </motion.div>
+
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link to="/shop" className="font-body text-white hover:text-anais-taupe transition-colors drop-shadow-lg relative">
+                  {t('nav.shop')}
+                  <motion.div
+                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-anais-taupe"
+                    initial={{ scaleX: 0 }}
+                    whileHover={{ scaleX: 1 }}
+                    transition={{ duration: 0.2 }}
+                  />
+                </Link>
+              </motion.div>
+
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link to="/gift-boxes" className="font-body text-white hover:text-anais-taupe transition-colors drop-shadow-lg relative">
+                  {t('nav.giftBoxes')}
+                  <motion.div
+                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-anais-taupe"
+                    initial={{ scaleX: 0 }}
+                    whileHover={{ scaleX: 1 }}
+                    transition={{ duration: 0.2 }}
+                  />
+                </Link>
+              </motion.div>
+
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link to="/about" className="font-body text-white hover:text-anais-taupe transition-colors drop-shadow-lg relative">
+                  {t('nav.about')}
+                  <motion.div
+                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-anais-taupe"
+                    initial={{ scaleX: 0 }}
+                    whileHover={{ scaleX: 1 }}
+                    transition={{ duration: 0.2 }}
+                  />
+                </Link>
+              </motion.div>
+            </motion.nav>
+
+            {/* Right side actions */}
+            <div className="flex items-center space-x-4">
+              {/* Language Switcher */}
+              <div className="hidden md:flex items-center space-x-2">
+                <Globe className="w-4 h-4 text-white drop-shadow-lg" />
+                <select
+                  value={currentLang}
+                  onChange={(e) => changeLanguage(e.target.value)}
+                  className="text-sm font-body bg-transparent border-none focus:outline-none text-white cursor-pointer drop-shadow-lg"
+                >
+                  <option value="en">EN</option>
+                  <option value="ar">AR</option>
+                  <option value="fr">FR</option>
+                </select>
+              </div>
 
             {/* Cart */}
-            <Link to="/cart" className="relative p-2 hover:bg-ivory-cream rounded-lg transition-colors">
-              <ShoppingCart className="w-6 h-6 text-charcoal" />
+            <Link to="/cart" className="relative p-3 hover:bg-white/20 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center">
+              <ShoppingCart className="w-6 h-6 text-white drop-shadow-lg" />
               {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-antique-gold text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-antique-gold text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center min-w-[20px] min-h-[20px]">
                   {cartCount}
                 </span>
               )}
             </Link>
 
+            {/* Admin Dashboard */}
+            {isAdmin && (
+              <Link to="/admin" className="p-3 hover:bg-white/20 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center">
+                <Shield className="w-6 h-6 text-white drop-shadow-lg" />
+              </Link>
+            )}
+
             {/* User Account */}
-            <Link to={user ? '/account' : '/login'} className="p-2 hover:bg-ivory-cream rounded-lg transition-colors">
-              <User className="w-6 h-6 text-charcoal" />
+            <Link to={user ? '/account' : '/login'} className="p-3 hover:bg-white/20 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center">
+              <User className="w-6 h-6 text-white drop-shadow-lg" />
             </Link>
 
             {/* Mobile Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 hover:bg-ivory-cream rounded-lg transition-colors"
+              className="md:hidden p-3 hover:bg-white/20 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
             >
-              {mobileMenuOpen ? (
-                <X className="w-6 h-6 text-charcoal" />
-              ) : (
-                <Menu className="w-6 h-6 text-charcoal" />
-              )}
-            </button>
-          </div>
-        </div>
+                {mobileMenuOpen ? (
+                  <X className="w-6 h-6 text-white drop-shadow-lg" />
+                ) : (
+                  <Menu className="w-6 h-6 text-white drop-shadow-lg" />
+                )}
+              </button>
+            </div>
+          </motion.div>
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-warm-gray/20">
-            <nav className="flex flex-col space-y-4">
-              <Link
-                to="/"
-                onClick={() => setMobileMenuOpen(false)}
-                className="font-body text-charcoal hover:text-anais-taupe transition-colors"
-              >
-                {t('nav.home')}
-              </Link>
-              <Link
-                to="/shop?type=ensemble"
-                onClick={() => setMobileMenuOpen(false)}
-                className="font-body text-charcoal hover:text-anais-taupe transition-colors"
-              >
-                {t('nav.ensembles')}
-              </Link>
-              <Link
-                to="/shop"
-                onClick={() => setMobileMenuOpen(false)}
-                className="font-body text-charcoal hover:text-anais-taupe transition-colors"
-              >
-                {t('nav.shop')}
-              </Link>
-              <Link
-                to="/gift-boxes"
-                onClick={() => setMobileMenuOpen(false)}
-                className="font-body text-charcoal hover:text-anais-taupe transition-colors"
-              >
-                {t('nav.giftBoxes')}
-              </Link>
-              <Link
-                to="/about"
-                onClick={() => setMobileMenuOpen(false)}
-                className="font-body text-charcoal hover:text-anais-taupe transition-colors"
-              >
-                {t('nav.about')}
-              </Link>
-
-              {/* Language Switcher Mobile */}
-              <div className="flex items-center space-x-2 pt-4 border-t border-warm-gray/20">
-                <Globe className="w-4 h-4 text-warm-gray" />
-                <select
-                  value={currentLang}
-                  onChange={(e) => changeLanguage(e.target.value)}
-                  className="text-sm font-body bg-transparent border-none focus:outline-none text-charcoal"
+          <div className="md:hidden absolute top-full left-0 right-0 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-xl z-40">
+            <nav className="flex flex-col py-4">
+                <Link
+                  to="/"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="font-body text-charcoal hover:text-anais-taupe hover:bg-gray-50 transition-all duration-200 py-4 px-6 text-base flex items-center border-b border-gray-100 last:border-b-0"
                 >
-                  <option value="en">English</option>
-                  <option value="ar">العربية</option>
-                  <option value="fr">Français</option>
-                </select>
-              </div>
+                  {t('nav.home')}
+                </Link>
+                <Link
+                  to="/shop?type=ensemble"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="font-body text-charcoal hover:text-anais-taupe hover:bg-gray-50 transition-all duration-200 py-4 px-6 text-base flex items-center border-b border-gray-100 last:border-b-0"
+                >
+                  {t('nav.ensembles')}
+                </Link>
+                <Link
+                  to="/shop"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="font-body text-charcoal hover:text-anais-taupe hover:bg-gray-50 transition-all duration-200 py-4 px-6 text-base flex items-center border-b border-gray-100 last:border-b-0"
+                >
+                  {t('nav.shop')}
+                </Link>
+                <Link
+                  to="/gift-boxes"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="font-body text-charcoal hover:text-anais-taupe hover:bg-gray-50 transition-all duration-200 py-4 px-6 text-base flex items-center border-b border-gray-100 last:border-b-0"
+                >
+                  {t('nav.giftBoxes')}
+                </Link>
+                <Link
+                  to="/about"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="font-body text-charcoal hover:text-anais-taupe hover:bg-gray-50 transition-all duration-200 py-4 px-6 text-base flex items-center"
+                >
+                  {t('nav.about')}
+                </Link>
+
+                {/* Language Switcher Mobile */}
+                <div className="flex items-center justify-between px-6 py-4 bg-gray-50 border-t border-gray-200">
+                  <div className="flex items-center space-x-2">
+                    <Globe className="w-4 h-4 text-gray-600" />
+                    <span className="text-sm font-body text-gray-700">Language</span>
+                  </div>
+                  <select
+                    value={currentLang}
+                    onChange={(e) => changeLanguage(e.target.value)}
+                    className="text-sm font-body bg-white border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-anais-taupe"
+                  >
+                    <option value="en">English</option>
+                    <option value="ar">العربية</option>
+                    <option value="fr">Français</option>
+                  </select>
+                </div>
             </nav>
           </div>
         )}
+        </div>
       </div>
-    </header>
+
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav />
+    </motion.header>
   )
 }

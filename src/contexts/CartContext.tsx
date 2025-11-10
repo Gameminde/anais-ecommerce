@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, ReactNode, useEffect, useMemo } from 'react'
 import { supabase, Product, CartItem } from '../lib/supabase'
 import { useAuth } from './AuthContext'
+import { trackEvent } from '../utils/analytics'
 
 interface CartContextType {
   cartItems: (CartItem & { product?: Product })[]
@@ -96,6 +97,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
           size,
           color,
         })
+
+        // Track add to cart event
+        const product = (await supabase
+          .from('products')
+          .select('name_en, price_dzd')
+          .eq('id', productId)
+          .single()).data
+
+        if (product) {
+          trackEvent('add_to_cart', {
+            productId,
+            productName: product.name_en,
+            price: product.price_dzd
+          })
+        }
       }
 
       await fetchCart()
@@ -107,7 +123,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const removeFromCart = async (itemId: string) => {
     try {
+      // Get item details before deletion for tracking
+      const itemToRemove = cartItems.find(item => item.id === itemId)
+
       await supabase.from('cart_items').delete().eq('id', itemId)
+
+      // Track remove from cart event
+      if (itemToRemove?.product) {
+        trackEvent('remove_from_cart', {
+          productId: itemToRemove.product.id,
+          productName: itemToRemove.product.name_en,
+          price: itemToRemove.product.price_dzd
+        })
+      }
+
       await fetchCart()
     } catch (error) {
       console.error('Error removing from cart:', error)

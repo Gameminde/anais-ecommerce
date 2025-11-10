@@ -18,13 +18,16 @@ export interface Product {
   description_fr: string | null
   price_dzd: number
   sale_price_dzd: number | null
-  product_type: 'dress' | 'perfume' | 'makeup' | 'gift_box'
+  product_type: 'ensemble' | 'perfume' | 'makeup' | 'gift_box'
   sizes: string[] | null
   colors: string[] | null
   is_featured: boolean
   is_active: boolean
   created_at: string
   updated_at: string
+  // Propriétés ajoutées dynamiquement par les requêtes
+  product_images?: ProductImage[]
+  image_url?: string
 }
 
 export interface ProductImage {

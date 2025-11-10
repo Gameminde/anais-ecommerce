@@ -1,0 +1,58 @@
+{
+  "name": "ANAIS - Elegant Modest Fashion",
+  "short_name": "ANAIS",
+  "description": "Elegant modest fashion for the modern Algerian woman. Shop our collection of sophisticated dresses and luxury gift boxes.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#8B5A3C",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "fr",
+  "dir": "ltr",
+  "categories": ["shopping", "fashion", "lifestyle"],
+  "icons": [
+    {
+      "src": "/logos/anais-icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logos/anais-icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Catalogue",
+      "short_name": "Shop",
+      "description": "Parcourez notre catalogue",
+      "url": "/shop",
+      "icons": [{ "src": "/logos/anais-icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Panier",
+      "short_name": "Cart",
+      "description": "Voir mon panier",
+      "url": "/cart",
+      "icons": [{ "src": "/logos/anais-icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/home-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshots/home-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ]
+}

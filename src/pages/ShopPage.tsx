@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Filter, Sparkles } from 'lucide-react'
 import { supabase, Product, Category } from '../lib/supabase'
+import { OptimizedImage } from '../components/ui/OptimizedImage'
 
 export default function ShopPage() {
   const [searchParams] = useSearchParams()
@@ -30,6 +31,9 @@ export default function ShopPage() {
   const fetchProducts = async () => {
     setLoading(true)
     try {
+      console.log('🔍 ShopPage: Fetching products with filters:', { selectedCategory, selectedType })
+
+      // Fetch products without images to avoid PostgREST join issues
       let query = supabase
         .from('products')
         .select('*')
@@ -43,10 +47,42 @@ export default function ShopPage() {
         query = query.eq('product_type', selectedType)
       }
 
-      const { data } = await query.order('created_at', { ascending: false })
-      if (data) setProducts(data)
+      const { data: productsData, error: productsError } = await query.order('created_at', { ascending: false })
+
+      if (productsError) {
+        console.error('Error fetching products:', productsError)
+        setLoading(false)
+        return
+      }
+
+      if (productsData && productsData.length > 0) {
+        // Fetch images separately for all products
+        const productIds = productsData.map(p => p.id)
+        const { data: imagesData, error: imagesError } = await supabase
+          .from('product_images')
+          .select('*')
+          .in('product_id', productIds)
+          .order('display_order')
+
+        if (imagesError) {
+          console.warn('Error fetching product images:', imagesError)
+        }
+
+        // Combine products with their images
+        const productsWithImages = productsData.map(product => ({
+          ...product,
+          product_images: imagesData?.filter(img => img.product_id === product.id) || []
+        }))
+
+        setProducts(productsWithImages)
+        console.log('✅ ShopPage: Loaded', productsWithImages.length, 'products with images')
+      } else {
+        setProducts([])
+        console.log('ℹ️ ShopPage: No products found')
+      }
     } catch (error) {
-      console.error('Error fetching products:', error)
+      console.error('Exception in fetchProducts:', error)
+      setProducts([])
     } finally {
       setLoading(false)
     }
@@ -72,7 +108,7 @@ export default function ShopPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
           {/* Filters Sidebar */}
           <aside className="lg:col-span-1">
             <div className="bg-white rounded-xl p-6 shadow-md sticky top-24">
@@ -92,7 +128,7 @@ export default function ShopPage() {
                       setSelectedCategory('')
                       setSelectedType('')
                     }}
-                    className={`w-full text-left px-3 py-2 rounded-lg font-body text-sm transition-colors ${
+                    className={`w-full text-left px-3 py-3 rounded-lg font-body text-sm sm:text-base transition-colors min-h-[44px] flex items-center ${
                       !selectedCategory && !selectedType
                         ? 'bg-anais-taupe text-white'
                         : 'text-warm-gray hover:bg-ivory-cream'
@@ -107,7 +143,7 @@ export default function ShopPage() {
                         setSelectedCategory(category.id)
                         setSelectedType('')
                       }}
-                      className={`w-full text-left px-3 py-2 rounded-lg font-body text-sm transition-colors ${
+                      className={`w-full text-left px-3 py-3 rounded-lg font-body text-sm sm:text-base transition-colors min-h-[44px] flex items-center ${
                         selectedCategory === category.id
                           ? 'bg-anais-taupe text-white'
                           : 'text-warm-gray hover:bg-ivory-cream'
@@ -161,35 +197,45 @@ export default function ShopPage() {
                 <p className="font-body text-warm-gray">Aucun produit trouvé</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {products.map((product) => (
                   <Link
                     key={product.id}
                     to={`/product/${product.id}`}
                     className="group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2"
                   >
-                    <div className="aspect-[3/4] bg-warm-gray/10 relative overflow-hidden">
+                    <div className="aspect-[3/4] bg-warm-gray/10 relative overflow-hidden group-hover:scale-105 transition-transform duration-300">
                       {product.is_featured && (
                         <div className="absolute top-4 right-4 bg-antique-gold text-white px-3 py-1 rounded-full text-xs font-bold z-10">
                           Vedette
                         </div>
                       )}
-                      <div className="w-full h-full flex items-center justify-center">
-                        <div className="w-24 h-24 bg-anais-taupe/20 rounded-full flex items-center justify-center">
-                          <Sparkles className="w-12 h-12 text-anais-taupe" />
+                      {product.product_images && product.product_images.length > 0 ? (
+                        <OptimizedImage
+                          src={product.product_images.find(img => img.is_primary)?.image_url || product.product_images[0].image_url}
+                          alt={product.name_en}
+                          className="w-full h-full object-cover object-center"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-anais-taupe/10 to-anais-gold/10">
+                          <div className="text-center">
+                            <Sparkles className="w-16 h-16 text-anais-taupe mx-auto mb-2" />
+                            <div className="text-xs text-anais-taupe font-medium">ANAIS</div>
+                            <div className="text-xs text-gray-500 truncate px-2">{product.name_en}</div>
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
-                    <div className="p-5">
-                      <h3 className="font-display text-lg text-charcoal mb-2 group-hover:text-anais-taupe transition-colors line-clamp-1">
+                    <div className="p-3 sm:p-4 lg:p-5">
+                      <h3 className="font-display text-base sm:text-lg text-charcoal mb-2 group-hover:text-anais-taupe transition-colors line-clamp-1">
                         {product.name_en}
                       </h3>
-                      <p className="font-body text-sm text-warm-gray mb-3 line-clamp-2">
+                      <p className="font-body text-xs sm:text-sm text-warm-gray mb-3 line-clamp-2">
                         {product.description_en}
                       </p>
                       <div className="flex items-center justify-between">
                         <div>
-                          <span className="font-body font-bold text-lg text-antique-gold">
+                          <span className="font-body font-bold text-base sm:text-lg text-antique-gold">
                             {formatPrice(product.price_dzd)} DZD
                           </span>
                           {product.sale_price_dzd && (

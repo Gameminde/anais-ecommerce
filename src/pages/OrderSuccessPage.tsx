@@ -7,7 +7,9 @@ export default function OrderSuccessPage() {
   const navigate = useNavigate();
   const { clearCart } = useCart();
 
-  useEffect(() => clearCart(), []);
+  useEffect(() => {
+    clearCart();
+  }, [clearCart]);
 
   return (
     <div className="max-w-2xl mx-auto p-4 text-center">
@@ -30,3 +32,4 @@ export default function OrderSuccessPage() {
     </div>
   );
 }
+

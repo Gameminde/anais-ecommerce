@@ -15,7 +15,7 @@ export default function OrderHistoryPage() {
     const { data: { session } } = await supabase.auth.getSession();
 
     const response = await fetch(
-      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/user-orders`,
+      `https://zvyhuqkyeyzkjdvafdkx.supabase.co/functions/v1/user-orders`,
       {
         headers: { Authorization: `Bearer ${session?.access_token}` },
       }
@@ -50,3 +50,6 @@ export default function OrderHistoryPage() {
     </div>
   );
 }
+
+
+
