@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
 import { supabase } from '../lib/supabase';
-import { trackEvent } from '../utils/analytics';
+// Analytics utils removed - using direct tracking
 
 export default function CheckoutPage() {
   const { user } = useAuth();
@@ -15,13 +15,7 @@ export default function CheckoutPage() {
   const total = cartTotal + deliveryFee;
 
   useEffect(() => {
-    // Track initiate checkout event
-    if (cartItems.length > 0 && cartTotal > 0) {
-      trackEvent('initiate_checkout', {
-        total: cartTotal,
-        itemCount: cartItems.length
-      });
-    }
+    // Analytics removed - trackEvent('initiate_checkout', { total: cartTotal, itemCount: cartItems.length })
   }, [cartItems, cartTotal]);
 
   const handleCheckout = async () => {

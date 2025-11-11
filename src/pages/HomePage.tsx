@@ -6,7 +6,7 @@ import { supabase, Product, GiftBox } from '../lib/supabase'
 import { motion } from 'framer-motion'
 import ScrollAnimationWrapper, { MagazinePage } from '../components/ScrollAnimationWrapper'
 import SplitText from '../components/SplitText'
-import { OptimizedImage } from '../components/ui/OptimizedImage'
+// OptimizedImage component removed - using direct img tag
 
 export default function HomePage() {
   const { t } = useTranslation()
@@ -153,10 +153,12 @@ export default function HomePage() {
                 >
                     <div className="aspect-[3/4] bg-gray-100 relative overflow-hidden">
                       {product.product_images && product.product_images.length > 0 ? (
-                        <OptimizedImage
+                        <img
                           src={product.product_images.find(img => img.is_primary)?.image_url || product.product_images[0].image_url}
                           alt={product.name_en}
                           className="w-full h-full object-cover object-center"
+                          crossOrigin="anonymous"
+                          referrerPolicy="no-referrer"
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-anais-taupe/10 to-anais-gold/10">
@@ -394,11 +396,13 @@ export default function HomePage() {
                 <Link to={`/product/${product.id}`}>
                   <div className="aspect-square bg-gray-100 relative overflow-hidden">
                     {product.product_images && product.product_images.length > 0 ? (
-                      <OptimizedImage
+                      <img
                         src={product.product_images.find(img => img.is_primary)?.image_url ||
                              product.product_images[0].image_url}
                         alt={product.name_en}
                         className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+                        crossOrigin="anonymous"
+                        referrerPolicy="no-referrer"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-anais-taupe/10 to-anais-gold/10">

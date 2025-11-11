@@ -8,9 +8,11 @@ interface Order {
   order_number: string;
   total_amount: number;
   delivery_fee_dzd: number;
+  payment_method: string;
   order_status: string;
   payment_status: string;
   created_at: string;
+  updated_at: string;
   customer: {
     first_name: string;
     last_name: string;

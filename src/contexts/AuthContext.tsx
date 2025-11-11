@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
 import { supabase } from '../lib/supabase'
-import { trackEvent } from '../utils/analytics'
+// Analytics utils removed - using direct tracking
 import { User, Session } from '@supabase/supabase-js'
 
 interface AuthContextType {
@@ -48,7 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     // Track login event
-    trackEvent('login', { method: 'email' })
+    // trackEvent('login', { method: 'email' }) // Analytics removed
   }
 
   const signUp = async (email: string, password: string, fullName: string) => {
@@ -167,13 +167,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (signInError) {
           console.warn('⚠️ Connexion automatique échouée, mais inscription réussie:', signInError.message)
           // Track signup event
-          trackEvent('signup', { method: 'email' })
+          // trackEvent('signup', { method: 'email' }) // Analytics removed
           // L'utilisateur pourra se connecter manuellement
           return data
         } else {
           console.log('✅ Connexion automatique réussie')
           // Track signup event
-          trackEvent('signup', { method: 'email' })
+          // trackEvent('signup', { method: 'email' }) // Analytics removed
           return signInData
         }
       } catch (signInError) {

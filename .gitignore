@@ -67,3 +67,135 @@ playwright-report/
 # test-*.js
 # fix-*.js
 # check-*.js
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# nyc test coverage
+.nyc_output/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Cache directories
+.cache/
+.parcel-cache/
+
+# Test files
+test-results/
+playwright-report/
+
+# Local development files
+*.local
+
+# Supabase local development
+.supabase/
+
+# Backup files
+*.backup
+*.bak
+
+# Debug scripts (we keep them for now but could ignore)
+# test-*.js
+# fix-*.js
+# check-*.js
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# nyc test coverage
+.nyc_output/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Cache directories
+.cache/
+.parcel-cache/
+
+# Test files
+test-results/
+playwright-report/
+
+# Local development files
+*.local
+
+# Supabase local development
+.supabase/
+
+# Backup files
+*.backup
+*.bak
+
+# Debug scripts (we keep them for now but could ignore)
+# test-*.js
+# fix-*.js
+# check-*.js
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# nyc test coverage
+.nyc_output/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Cache directories
+.cache/
+.parcel-cache/
+
+# Test files
+test-results/
+playwright-report/
+
+# Local development files
+*.local
+
+# Supabase local development
+.supabase/
+
+# Backup files
+*.backup
+*.bak
+
+# Debug scripts (we keep them for now but could ignore)
+# test-*.js
+# fix-*.js
+# check-*.js

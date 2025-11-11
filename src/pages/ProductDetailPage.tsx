@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { ShoppingCart, Check, Sparkles } from 'lucide-react'
+import { ShoppingCart, Check, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react'
 import { supabase, Product } from '../lib/supabase'
 import { useCart } from '../contexts/CartContext'
 import { useAuth } from '../contexts/AuthContext'
-import { trackEvent } from '../utils/analytics'
-import { OptimizedImage } from '../components/ui/OptimizedImage'
+// Analytics utils removed - using direct tracking
+// OptimizedImage component removed - using direct img tag
 
 export default function ProductDetailPage() {
   const { id } = useParams()
@@ -14,7 +14,7 @@ export default function ProductDetailPage() {
   const { t } = useTranslation()
   const { user } = useAuth()
   const { addToCart } = useCart()
-  
+
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
   const [selectedSize, setSelectedSize] = useState<string>('')
@@ -22,6 +22,7 @@ export default function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1)
   const [addingToCart, setAddingToCart] = useState(false)
   const [addedToCart, setAddedToCart] = useState(false)
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0)
 
   useEffect(() => {
     if (id) fetchProduct()
@@ -66,12 +67,7 @@ export default function ProductDetailPage() {
         setProduct(productWithImages)
         console.log('✅ ProductDetailPage: Loaded product with', imagesData?.length || 0, 'images')
 
-        // Track view product event
-        trackEvent('view_product', {
-          productId: id,
-          productName: productData.name_en,
-          price: productData.price_dzd
-        })
+        // Analytics removed - trackEvent('view_product', { productId: id, productName: productData.name_en, price: productData.price_dzd })
 
         // Set default selections
         if (productData.sizes && productData.sizes.length > 0) setSelectedSize(productData.sizes[0])
@@ -114,6 +110,26 @@ export default function ProductDetailPage() {
     }).format(price)
   }
 
+  const nextImage = () => {
+    if (product?.product_images && product.product_images.length > 0) {
+      setSelectedImageIndex((prev) =>
+        prev === product.product_images!.length - 1 ? 0 : prev + 1
+      )
+    }
+  }
+
+  const prevImage = () => {
+    if (product?.product_images && product.product_images.length > 0) {
+      setSelectedImageIndex((prev) =>
+        prev === 0 ? product.product_images!.length - 1 : prev - 1
+      )
+    }
+  }
+
+  const selectImage = (index: number) => {
+    setSelectedImageIndex(index)
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -134,30 +150,87 @@ export default function ProductDetailPage() {
     <div className="min-h-screen bg-ivory-cream">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Product Image */}
-          <div className="bg-white rounded-2xl overflow-hidden shadow-lg">
-            <div className="aspect-[3/4] bg-warm-gray/10 relative">
-              {product.product_images && product.product_images.length > 0 ? (
-                <OptimizedImage
-                  src={product.product_images.find(img => img.is_primary)?.image_url || product.product_images[0].image_url}
-                  alt={product.name_en}
-                  className="w-full h-full object-cover object-center"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-anais-taupe/10 to-anais-gold/10">
-                  <div className="text-center">
-                    <Sparkles className="w-24 h-24 text-anais-taupe mx-auto mb-4" />
-                    <div className="text-sm text-anais-taupe font-medium">ANAIS</div>
-                    <div className="text-sm text-gray-500 mt-2">{product.name_en}</div>
+          {/* Product Images Gallery */}
+          <div className="space-y-4">
+            {/* Main Image */}
+            <div className="bg-white rounded-2xl overflow-hidden shadow-lg relative">
+              <div className="aspect-[3/4] bg-warm-gray/10 relative">
+                {product.product_images && product.product_images.length > 0 ? (
+                  <>
+                    <img
+                      src={product.product_images[selectedImageIndex]?.image_url}
+                      alt={`${product.name_en} - View ${selectedImageIndex + 1}`}
+                      className="w-full h-full object-cover object-center"
+                      crossOrigin="anonymous"
+                      referrerPolicy="no-referrer"
+                    />
+
+                    {/* Navigation arrows for main image */}
+                    {product.product_images.length > 1 && (
+                      <>
+                        <button
+                          onClick={prevImage}
+                          className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all"
+                        >
+                          <ChevronLeft className="w-5 h-5 text-charcoal" />
+                        </button>
+                        <button
+                          onClick={nextImage}
+                          className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all"
+                        >
+                          <ChevronRight className="w-5 h-5 text-charcoal" />
+                        </button>
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-anais-taupe/10 to-anais-gold/10">
+                    <div className="text-center">
+                      <Sparkles className="w-24 h-24 text-anais-taupe mx-auto mb-4" />
+                      <div className="text-sm text-anais-taupe font-medium">ANAIS</div>
+                      <div className="text-sm text-gray-500 mt-2">{product.name_en}</div>
+                    </div>
                   </div>
-                </div>
-              )}
-              {product.is_featured && (
-                <div className="absolute top-6 right-6 bg-antique-gold text-white px-4 py-2 rounded-full font-bold">
-                  Featured
-                </div>
-              )}
+                )}
+
+                {/* Badges */}
+                {product.product_type === 'ensemble' && (
+                  <div className="absolute top-4 left-4 bg-anais-taupe text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                    Ensemble
+                  </div>
+                )}
+                {product.is_featured && (
+                  <div className="absolute top-4 right-4 bg-antique-gold text-white px-4 py-2 rounded-full font-bold text-sm">
+                    Featured
+                  </div>
+                )}
+              </div>
             </div>
+
+            {/* Thumbnail Gallery */}
+            {product.product_images && product.product_images.length > 1 && (
+              <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
+                {product.product_images.map((image, index) => (
+                  <button
+                    key={image.id}
+                    onClick={() => selectImage(index)}
+                    className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${
+                      selectedImageIndex === index
+                        ? 'border-anais-taupe shadow-lg'
+                        : 'border-gray-200 hover:border-anais-taupe/50'
+                    }`}
+                  >
+                    <img
+                      src={image.image_url}
+                      alt={`${product.name_en} - Thumbnail ${index + 1}`}
+                      className="w-full h-full object-cover object-center"
+                      crossOrigin="anonymous"
+                      referrerPolicy="no-referrer"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Product Details */}
@@ -184,6 +257,25 @@ export default function ProductDetailPage() {
                 )}
               </div>
             </div>
+
+            {/* Ensemble Information */}
+            {product.product_type === 'ensemble' && (
+              <div className="mb-6 p-4 bg-anais-taupe/5 rounded-xl border border-anais-taupe/10">
+                <div className="flex items-center space-x-2 mb-3">
+                  <div className="w-2 h-2 bg-anais-taupe rounded-full"></div>
+                  <span className="font-body font-bold text-anais-taupe">Ensemble Complet</span>
+                </div>
+                <p className="font-body text-sm text-warm-gray leading-relaxed">
+                  Cet ensemble comprend tous les éléments nécessaires pour une tenue élégante et complète.
+                  Découvrez toutes les vues de l'ensemble dans la galerie ci-dessus.
+                </p>
+                {product.product_images && product.product_images.length > 1 && (
+                  <p className="font-body text-sm text-anais-taupe font-medium mt-2">
+                    {product.product_images.length} vues disponibles
+                  </p>
+                )}
+              </div>
+            )}
 
             {/* Size Selection */}
             {product.sizes && product.sizes.length > 0 && (
@@ -292,6 +384,12 @@ export default function ProductDetailPage() {
                   <dt className="font-body text-sm text-warm-gray">Type:</dt>
                   <dd className="font-body text-sm font-bold text-charcoal capitalize">{product.product_type}</dd>
                 </div>
+                {product.product_images && product.product_images.length > 0 && (
+                  <div className="flex justify-between">
+                    <dt className="font-body text-sm text-warm-gray">Images:</dt>
+                    <dd className="font-body text-sm font-bold text-charcoal">{product.product_images.length} vues</dd>
+                  </div>
+                )}
               </dl>
             </div>
           </div>

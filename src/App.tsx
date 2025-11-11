@@ -4,7 +4,7 @@ import { AuthProvider } from './contexts/AuthContext'
 import { CartProvider } from './contexts/CartContext'
 import { useMobileGestures } from './hooks/useMobileGestures'
 import { ScrollProgressBar } from './components/ScrollAnimationWrapper'
-import { initGA, initFacebookPixel, logPageView } from './utils/analytics'
+// Note: Analytics utils were removed, using direct GA/Facebook Pixel
 import './i18n'
 
 import Header from './components/Header'
@@ -15,6 +15,7 @@ import { AdminRoute } from './components/admin/AdminRoute'
 // Lazy load pages for better performance
 const HomePage = lazy(() => import('./pages/HomePage'))
 const ShopPage = lazy(() => import('./pages/ShopPage'))
+const GiftBoxesPage = lazy(() => import('./pages/GiftBoxesPage'))
 const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage'))
 const CartPage = lazy(() => import('./pages/CartPage'))
 const LoginPage = lazy(() => import('./pages/LoginPage'))
@@ -52,13 +53,12 @@ function App() {
 
   // Initialize analytics on app start
   useEffect(() => {
-    initGA()
-    initFacebookPixel()
+    // Analytics initialization removed - was using deleted utils
   }, [])
 
   // Track page views
   useEffect(() => {
-    logPageView(window.location.pathname)
+    // Page view tracking removed - was using deleted utils
   }, [])
 
   return (
@@ -84,7 +84,7 @@ function App() {
                   <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/about" element={<AboutPage />} />
-                  <Route path="/gift-boxes" element={<ShopPage />} />
+                  <Route path="/gift-boxes" element={<GiftBoxesPage />} />
                   <Route path="/auth/callback" element={<AuthCallbackPage />} />
                   <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
                   <Route path="/account" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />

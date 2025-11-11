@@ -4,8 +4,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
 import { supabase } from '../lib/supabase';
 import { WILAYAS, validateAlgerianPhone, formatAlgerianPhone } from '../lib/constants';
-import { Select } from '../components/ui/Select';
-import { trackEvent } from '../utils/analytics';
+// Select component removed - using native select
+// Analytics utils removed - using direct tracking
 
 export default function CheckoutPage() {
   const { user } = useAuth();
@@ -41,13 +41,7 @@ export default function CheckoutPage() {
   }, [user]);
 
   useEffect(() => {
-    // Track initiate checkout event
-    if (cartItems.length > 0 && cartTotal > 0) {
-      trackEvent('initiate_checkout', {
-        total: cartTotal,
-        itemCount: cartItems.length
-      });
-    }
+    // Analytics removed - trackEvent('initiate_checkout', { total: cartTotal, itemCount: cartItems.length })
   }, [cartItems, cartTotal]);
 
   const loadAddresses = async () => {
@@ -494,12 +488,7 @@ export default function CheckoutPage() {
       // Vérifier que les articles ont été créés (pas nécessaire de parser le JSON ici)
       console.log('✅ Order items created');
 
-      // Track purchase event
-      trackEvent('purchase', {
-        orderId: orderId,
-        total: total,
-        items: cartItems
-      });
+      // Analytics removed - trackEvent('purchase', { orderId, total, items: cartItems })
 
       clearCart();
       navigate(`/order-success/${orderId}`);
@@ -700,16 +689,19 @@ export default function CheckoutPage() {
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Wilaya *
                       </label>
-                      <Select
-                        options={WILAYAS.map(w => ({ value: w.code, label: `${w.code} - ${w.name}` }))}
+                      <select
                         value={quickForm.wilaya}
-                        onValueChange={(value) => handleQuickFormChange('wilaya', value)}
-                        placeholder="Sélectionnez votre wilaya"
-                        searchable={true}
+                        onChange={(e) => handleQuickFormChange('wilaya', e.target.value)}
                         required={true}
-                        error={formErrors.wilaya}
-                        className="text-base"
-                      />
+                        className={`w-full px-3 py-2 border rounded-md text-base ${formErrors.wilaya ? 'border-red-500' : 'border-gray-300'}`}
+                      >
+                        <option value="">Sélectionnez votre wilaya</option>
+                        {WILAYAS.map(w => (
+                          <option key={w.code} value={w.code}>
+                            {w.code} - {w.name}
+                          </option>
+                        ))}
+                      </select>
         </div>
 
         <div>
