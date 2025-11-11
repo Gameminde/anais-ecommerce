@@ -1,9 +1,11 @@
 [build]
   publish = "dist"
-  command = "npm run build"
+  command = "npm run build && node debug-netlify.js"
 
 [build.environment]
   NODE_VERSION = "18"
+  VITE_SUPABASE_URL = "https://zvyhuqkyeyzkjdvafdkx.supabase.co"
+  VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2eWh1cWt5ZXl6a2pkdmFmZGt4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MjI5NzQ3NSwiZXhwItoyMDc3ODczNDc1fQ.xrlPAtnJM1_zT2ik3T-AHbJQ6EE5ajerPWim-j8MZXI"
 
 [[redirects]]
   from = "/*"
@@ -37,8 +39,3 @@
   for = "/manifest.webmanifest"
   [headers.values]
     Cache-Control = "public, max-age=3600"
-
-# Environment variables template (to be filled)
-[build.environment]
-  VITE_SUPABASE_URL = "your_supabase_url"
-  VITE_SUPABASE_ANON_KEY = "your_supabase_anon_key"
