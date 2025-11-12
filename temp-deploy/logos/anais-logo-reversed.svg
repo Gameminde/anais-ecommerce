@@ -1,0 +1,36 @@
+<!-- ANAIS Reversed Logo (for dark backgrounds) -->
+<svg width="400" height="100" viewBox="0 0 400 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="ribbedPatternWhite" x="0" y="0" width="100" height="6" patternUnits="userSpaceOnUse">
+      <rect x="0" y="0" width="100" height="4" fill="#FFFFFF"/>
+      <rect x="0" y="4" width="100" height="2" fill="rgba(255, 255, 255, 0.3)"/>
+    </pattern>
+  </defs>
+  
+  <!-- White ANAIS wordmark for dark backgrounds -->
+  <g id="wordmark-reversed">
+    <!-- Letter A -->
+    <path d="M 45 85 L 70 25 L 95 85 M 55 65 L 85 65" 
+          stroke="#FFFFFF" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Letter N -->
+    <path d="M 115 85 L 115 25 L 155 85 L 155 25" 
+          stroke="#FFFFFF" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Letter A (second) -->
+    <path d="M 175 85 L 200 25 L 225 85 M 185 65 L 215 65" 
+          stroke="#FFFFFF" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Letter I -->
+    <path d="M 245 25 L 245 85" 
+          stroke="#FFFFFF" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <circle cx="245" cy="16" r="4" fill="#D4AF37"/>
+    
+    <!-- Letter S -->
+    <path d="M 285 35 Q 265 25 265 40 Q 265 55 285 60 Q 305 65 305 80 Q 305 90 285 85" 
+          stroke="#FFFFFF" stroke-width="8" fill="none" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Subtle ribbed texture overlay -->
+  <rect x="40" y="20" width="270" height="70" fill="url(#ribbedPatternWhite)" opacity="0.1"/>
+</svg>

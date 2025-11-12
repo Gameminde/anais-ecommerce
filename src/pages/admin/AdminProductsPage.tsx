@@ -21,6 +21,12 @@ interface Product {
   is_featured: boolean;
   is_active: boolean;
   images?: any[];
+  product_images?: Array<{
+    id: string;
+    image_url: string;
+    is_primary: boolean;
+    display_order: number;
+  }>;
   created_at?: string;
 }
 
@@ -329,6 +335,25 @@ export default function AdminProductsPage() {
     } catch (err) {
       console.error('Error deleting product:', err);
       alert('Erreur lors de la suppression du produit');
+    }
+  };
+
+  const handleToggleActive = async (product: Product) => {
+    try {
+      const { error } = await supabase
+        .from('products')
+        .update({
+          is_active: !product.is_active,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', product.id);
+
+      if (error) throw error;
+
+      fetchProducts(); // Refresh the list
+    } catch (err) {
+      console.error('Error toggling product active status:', err);
+      alert('Erreur lors de la modification du statut du produit');
     }
   };
 

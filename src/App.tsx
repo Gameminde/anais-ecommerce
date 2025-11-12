@@ -9,6 +9,7 @@ import './i18n'
 
 import Header from './components/Header'
 import Footer from './components/Footer'
+import MobileBottomNav from './components/MobileBottomNav'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { AdminRoute } from './components/admin/AdminRoute'
 
@@ -102,6 +103,9 @@ function App() {
             </main>
             <Footer />
           </div>
+
+          {/* Mobile Bottom Navigation Portal - Complètement indépendant */}
+          <MobileBottomNav />
         </CartProvider>
       </AuthProvider>
     </Router>
