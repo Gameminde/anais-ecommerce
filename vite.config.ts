@@ -3,11 +3,13 @@ import react from "@vitejs/plugin-react"
 import { defineConfig } from "vite"
 import sourceIdentifierPlugin from 'vite-plugin-source-identifier'
 import { VitePWA } from 'vite-plugin-pwa'
+import { imagetools } from 'vite-imagetools'
 
 const isProd = process.env.BUILD_MODE === 'prod'
 export default defineConfig({
   plugins: [
     react(),
+    imagetools(),
     sourceIdentifierPlugin({
       enabled: !isProd,
       attributePrefix: 'data-matrix',
@@ -76,10 +78,34 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          ui: ['lucide-react', '@supabase/supabase-js'],
-          utils: ['i18next', 'react-i18next']
+        manualChunks: (id) => {
+          // Vendor chunk - core React libraries
+          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
+            return 'react-vendor';
+          }
+          // Router chunk
+          if (id.includes('node_modules/react-router-dom')) {
+            return 'router';
+          }
+          // UI libraries chunk
+          if (id.includes('node_modules/lucide-react') ||
+              id.includes('node_modules/@radix-ui') ||
+              id.includes('node_modules/framer-motion')) {
+            return 'ui-libs';
+          }
+          // Supabase chunk
+          if (id.includes('node_modules/@supabase')) {
+            return 'supabase';
+          }
+          // Utils chunk
+          if (id.includes('node_modules/i18next') ||
+              id.includes('node_modules/react-i18next')) {
+            return 'i18n';
+          }
+          // Large vendor libraries
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
         }
       }
     },
@@ -90,7 +116,11 @@ export default defineConfig({
     terserOptions: {
       compress: {
         drop_console: true,
-        drop_debugger: true
+        drop_debugger: true,
+        pure_funcs: ['console.log', 'console.info', 'console.debug']
+      },
+      mangle: {
+        safari10: true
       }
     }
   },
