@@ -1,12 +1,12 @@
-import { Link, useLocation } from 'react-router-dom'
-import { ShoppingCart, User, Menu, X, Globe, Home, ShoppingBag, Package, Heart, Shield } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { ShoppingCart, User, Menu, X, Globe, Home, ShoppingBag, Package, Heart, Shield } from 'lucide-react'
 import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import { useCart } from '../contexts/CartContext'
 import { useAdmin } from '../hooks/useAdmin'
-import { motion, useScroll, useTransform } from 'framer-motion'
+// import { motion, useScroll, useTransform } from 'framer-motion' // Temporarily disabled due to React conflicts
 import SplitText from './SplitText'
 import ScrollAnimationWrapper from './ScrollAnimationWrapper'
 
@@ -27,48 +27,34 @@ export default function Header() {
 
   const currentLang = i18n.language
 
-  // Scroll-based animations for header
-  const { scrollY } = useScroll()
-  const headerY = useTransform(scrollY, [0, 100], [0, -20])
-  const headerOpacity = useTransform(scrollY, [0, 100], [1, 0.9])
-  const backgroundY = useTransform(scrollY, [0, 300], [0, -150]) // Parallax effect
+  // Simple scroll detection for header styling
+  const [isScrolled, setIsScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   return (
-    <motion.header
-      className="relative h-20 bg-transparent sticky top-0 z-50 overflow-hidden"
-      style={{
-        y: headerY,
-        opacity: headerOpacity
-      }}
-    >
-      {/* Background Image with Parallax */}
-      <motion.div
-        className="absolute inset-0 w-full h-full"
-        style={{ y: backgroundY }}
-      >
+    <header className={`relative h-20 bg-transparent sticky top-0 z-50 overflow-hidden transition-all duration-300 ${isScrolled ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-transparent'}`}>
+      {/* Background Image */}
+      <div className="absolute inset-0 w-full h-full">
         <img
           src="/Gemini_Generated_Image_5a9xp45a9xp45a9x.png"
           alt="ANAIS Fashion Collection"
           className="w-full h-full object-cover object-center"
         />
         {/* Dark overlay for better text readability */}
-        <motion.div
-          className="absolute inset-0 bg-black/40"
-          initial={{ opacity: 0.4 }}
-          whileInView={{ opacity: 0.4 }}
-          transition={{ duration: 0.3 }}
-        />
-      </motion.div>
+        <div className="absolute inset-0 bg-black/40" />
+      </div>
 
       {/* Header Content Overlay */}
       <div className="relative z-10">
         <div className="container mx-auto px-4">
-          <motion.div
-            className="flex items-center justify-between h-20"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
+          <div className="flex items-center justify-between h-20">
           {/* Animated Logo */}
           <Link to="/" className="flex items-center">
             <SplitText
@@ -83,87 +69,42 @@ export default function Header() {
           </Link>
 
             {/* Desktop Navigation */}
-            <motion.nav
-              className="hidden md:flex items-center space-x-8"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.8 }}
-            >
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
+            <nav className="hidden md:flex items-center space-x-8">
+              <div className="hover:scale-105 transition-transform">
                 <Link to="/" className="font-body text-white hover:text-anais-taupe transition-colors drop-shadow-lg relative">
                   {t('nav.home')}
-                  <motion.div
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-anais-taupe"
-                    initial={{ scaleX: 0 }}
-                    whileHover={{ scaleX: 1 }}
-                    transition={{ duration: 0.2 }}
-                  />
+                  <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-anais-taupe scale-x-0 hover:scale-x-100 transition-transform duration-200" />
                 </Link>
-              </motion.div>
+              </div>
 
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
+              <div className="hover:scale-105 transition-transform">
                 <Link to="/shop?type=ensemble" className="font-body text-white hover:text-anais-taupe transition-colors drop-shadow-lg relative">
                   {t('nav.ensembles')}
-                  <motion.div
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-anais-taupe"
-                    initial={{ scaleX: 0 }}
-                    whileHover={{ scaleX: 1 }}
-                    transition={{ duration: 0.2 }}
-                  />
+                  <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-anais-taupe scale-x-0 hover:scale-x-100 transition-transform duration-200" />
                 </Link>
-              </motion.div>
+              </div>
 
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
+              <div className="hover:scale-105 transition-transform">
                 <Link to="/shop" className="font-body text-white hover:text-anais-taupe transition-colors drop-shadow-lg relative">
                   {t('nav.shop')}
-                  <motion.div
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-anais-taupe"
-                    initial={{ scaleX: 0 }}
-                    whileHover={{ scaleX: 1 }}
-                    transition={{ duration: 0.2 }}
-                  />
+                  <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-anais-taupe scale-x-0 hover:scale-x-100 transition-transform duration-200" />
                 </Link>
-              </motion.div>
+              </div>
 
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
+              <div className="hover:scale-105 transition-transform">
                 <Link to="/gift-boxes" className="font-body text-white hover:text-anais-taupe transition-colors drop-shadow-lg relative">
                   {t('nav.giftBoxes')}
-                  <motion.div
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-anais-taupe"
-                    initial={{ scaleX: 0 }}
-                    whileHover={{ scaleX: 1 }}
-                    transition={{ duration: 0.2 }}
-                  />
+                  <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-anais-taupe scale-x-0 hover:scale-x-100 transition-transform duration-200" />
                 </Link>
-              </motion.div>
+              </div>
 
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
+              <div className="hover:scale-105 transition-transform">
                 <Link to="/about" className="font-body text-white hover:text-anais-taupe transition-colors drop-shadow-lg relative">
                   {t('nav.about')}
-                  <motion.div
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-anais-taupe"
-                    initial={{ scaleX: 0 }}
-                    whileHover={{ scaleX: 1 }}
-                    transition={{ duration: 0.2 }}
-                  />
+                  <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-anais-taupe scale-x-0 hover:scale-x-100 transition-transform duration-200" />
                 </Link>
-              </motion.div>
-            </motion.nav>
+              </div>
+            </nav>
 
             {/* Right side actions */}
             <div className="flex items-center space-x-4">
@@ -215,7 +156,7 @@ export default function Header() {
                 )}
               </button>
             </div>
-          </motion.div>
+          </div>
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
@@ -279,7 +220,7 @@ export default function Header() {
         </div>
       </div>
 
-    </motion.header>
+    </header>
   )
 
   

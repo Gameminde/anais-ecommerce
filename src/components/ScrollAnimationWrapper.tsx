@@ -1,6 +1,6 @@
-import { motion, useScroll, useTransform } from 'framer-motion'
-import { ReactNode, useRef } from 'react'
-import { useScrollAnimation, useParallax } from '../hooks/useScrollAnimation'
+// import { motion, useScroll, useTransform } from 'framer-motion' // Temporarily disabled
+import React, { ReactNode, useRef } from 'react'
+// import { useScrollAnimation, useParallax } from '../hooks/useScrollAnimation'
 
 interface ScrollAnimationWrapperProps {
   children: ReactNode
@@ -24,122 +24,75 @@ export default function ScrollAnimationWrapper({
   once = true
 }: ScrollAnimationWrapperProps) {
   const ref = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"]
-  })
+  const [isVisible, setIsVisible] = React.useState(false)
 
-  const { elementRef, isVisible } = useScrollAnimation({ threshold: 0.1, triggerOnce: once })
-  const { offsetY } = useParallax(parallax)
+  React.useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true)
+          if (once) observer.disconnect()
+        }
+      },
+      { threshold: 0.1 }
+    )
 
-  const getAnimationVariants = () => {
-    const baseTransition = {
-      duration,
-      delay,
-      ease: [0.25, 0.25, 0.25, 0.75]
+    if (ref.current) {
+      observer.observe(ref.current)
     }
 
-    switch (animation) {
-      case 'fadeIn':
-        return {
-          hidden: { opacity: 0 },
-          visible: { opacity: 1, transition: baseTransition }
-        }
-      case 'slideUp':
-        return {
-          hidden: { opacity: 0, y: 50 },
-          visible: { opacity: 1, y: 0, transition: baseTransition }
-        }
-      case 'slideLeft':
-        return {
-          hidden: { opacity: 0, x: 50 },
-          visible: { opacity: 1, x: 0, transition: baseTransition }
-        }
-      case 'slideRight':
-        return {
-          hidden: { opacity: 0, x: -50 },
-          visible: { opacity: 1, x: 0, transition: baseTransition }
-        }
-      case 'scale':
-        return {
-          hidden: { opacity: 0, scale: 0.8 },
-          visible: { opacity: 1, scale: 1, transition: baseTransition }
-        }
-      case 'magazine':
-        return {
-          hidden: { opacity: 0, y: 100, rotateX: 15 },
-          visible: {
-            opacity: 1,
-            y: 0,
-            rotateX: 0,
-            transition: {
-              ...baseTransition,
-              type: "spring",
-              stiffness: 100,
-              damping: 20
-            }
-          }
-        }
-      default:
-        return {
-          hidden: { opacity: 0 },
-          visible: { opacity: 1, transition: baseTransition }
-        }
-    }
-  }
+    return () => observer.disconnect()
+  }, [once])
 
-  const variants = getAnimationVariants()
-
-  // Magazine-style transform effects
-  const magazineY = useTransform(scrollYProgress, [0, 1], [0, -50])
-  const magazineRotate = useTransform(scrollYProgress, [0, 1], [0, 5])
-  const magazineScale = useTransform(scrollYProgress, [0, 1], [1, 0.95])
+  const animationClass = animation === 'fadeIn' ? 'animate-fade-in' :
+                        animation === 'slideUp' ? 'animate-slide-up' :
+                        'animate-fade-in'
 
   return (
-    <motion.div
-      ref={elementRef as any}
-      className={className}
+    <div
+      ref={ref}
+      className={`${className} ${isVisible ? animationClass : 'opacity-0'}`}
       style={{
-        transform: parallax ? `translateY(${offsetY}px)` : undefined,
-        y: magazineEffect ? magazineY : undefined,
-        rotateX: magazineEffect ? magazineRotate : undefined,
-        scale: magazineEffect ? magazineScale : undefined,
+        animationDelay: isVisible ? `${delay}s` : undefined,
+        animationDuration: `${duration}s`,
+        transition: 'opacity 0.8s ease-out'
       }}
-      initial="hidden"
-      animate={isVisible ? "visible" : "hidden"}
     >
       {children}
-    </motion.div>
+    </div>
   )
 }
 
 // Magazine-style page transition component
 export function MagazinePage({ children, className = '' }: { children: ReactNode, className?: string }) {
   return (
-    <motion.div
-      className={className}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{
-        duration: 0.6,
-        ease: [0.25, 0.25, 0.25, 0.75]
-      }}
-    >
+    <div className={className}>
       {children}
-    </motion.div>
+    </div>
   )
 }
 
 // Smooth scroll progress bar
 export function ScrollProgressBar() {
-  const { scrollYProgress } = useScroll()
+  const [scrollProgress, setScrollProgress] = React.useState(0)
+
+  React.useEffect(() => {
+    const updateProgress = () => {
+      const scrolled = window.scrollY
+      const maxHeight = document.documentElement.scrollHeight - window.innerHeight
+      setScrollProgress(scrolled / maxHeight)
+    }
+
+    window.addEventListener('scroll', updateProgress)
+    updateProgress() // Initial call
+
+    return () => window.removeEventListener('scroll', updateProgress)
+  }, [])
 
   return (
-    <motion.div
-      className="fixed top-0 left-0 right-0 h-1 bg-anais-taupe z-50 origin-left"
-      style={{ scaleX: scrollYProgress }}
-      transition={{ duration: 0.1 }}
+    <div
+      className="fixed top-0 left-0 right-0 h-1 bg-anais-taupe z-50 origin-left transition-transform duration-100"
+      style={{ transform: `scaleX(${scrollProgress})` }}
     />
   )
 }

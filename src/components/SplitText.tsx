@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+// import { motion } from 'framer-motion' // Temporarily disabled due to React conflicts
 import { useEffect, useState } from 'react'
 
 interface SplitTextProps {
@@ -73,54 +73,31 @@ export default function SplitText({
     switch (type) {
       case 'chars':
         return text.split('').map((char, index) => (
-          <motion.span
+          <span
             key={index}
-            initial={{ opacity: 0, ...getDirectionOffset() }}
-            whileInView={{ opacity: 1, x: 0, y: 0 }}
-            viewport={{ once }}
-            transition={{
-              duration,
-              delay: index * staggerChildren,
-              ease: "easeOut"
-            }}
-            style={{ display: 'inline-block', whiteSpace: char === ' ' ? 'pre' : 'normal' }}
+            className="inline-block"
+            style={{ whiteSpace: char === ' ' ? 'pre' : 'normal' }}
           >
             {char === ' ' ? '\u00A0' : char}
-          </motion.span>
+          </span>
         ))
       case 'words':
         return text.split(' ').map((word, index) => (
-          <motion.span
+          <span
             key={index}
-            initial={{ opacity: 0, ...getDirectionOffset() }}
-            whileInView={{ opacity: 1, x: 0, y: 0 }}
-            viewport={{ once }}
-            transition={{
-              duration,
-              delay: index * staggerChildren,
-              ease: "easeOut"
-            }}
-            style={{ display: 'inline-block', marginRight: '0.3em' }}
+            className="inline-block mr-2"
           >
             {word}
-          </motion.span>
+          </span>
         ))
       case 'lines':
         return text.split('\n').map((line, index) => (
-          <motion.div
+          <div
             key={index}
-            initial={{ opacity: 0, ...getDirectionOffset() }}
-            whileInView={{ opacity: 1, x: 0, y: 0 }}
-            viewport={{ once }}
-            transition={{
-              duration,
-              delay: index * staggerChildren,
-              ease: "easeOut"
-            }}
             style={{ display: 'block' }}
           >
             {line}
-          </motion.div>
+          </div>
         ))
       default:
         return text
@@ -128,14 +105,9 @@ export default function SplitText({
   }
 
   return (
-    <motion.span
-      className={className}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once, margin: "-100px" }}
-    >
+    <span className={className}>
       {splitText()}
-    </motion.span>
+    </span>
   )
 }
 
