@@ -40,3 +40,4 @@
   [headers.values]
     Cache-Control = "public, max-age=3600"
 
+# Force deployment: 2025-11-12 23:38:32
