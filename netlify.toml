@@ -1,6 +1,6 @@
 [build]
   publish = "dist"
-  command = "npm run build && node debug-netlify.js"
+  command = "npm run build && node fix-netlify-paths.js && node debug-netlify.js"
 
 [build.environment]
   NODE_VERSION = "18"
@@ -39,3 +39,4 @@
   for = "/manifest.webmanifest"
   [headers.values]
     Cache-Control = "public, max-age=3600"
+

@@ -294,7 +294,7 @@ export default function ShopPage() {
                         <div className="flex items-center justify-between">
                           <div>
                             <span className="font-body font-bold text-base sm:text-lg text-antique-gold">
-                              {formatPrice(product.price_dzd)} DZD
+                              {formatPrice(product.price_dzd)} DA
                             </span>
                             {product.sale_price_dzd && (
                               <span className="block font-body text-xs text-warm-gray line-through">

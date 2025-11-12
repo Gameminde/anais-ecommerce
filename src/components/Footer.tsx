@@ -59,17 +59,17 @@ export default function Footer() {
           <div>
             <h3 className="font-display text-lg mb-4">Contactez-nous</h3>
             <div className="flex flex-col space-y-3">
-              <a href="tel:+213555123456" className="flex items-center space-x-2 text-sm text-warm-gray hover:text-antique-gold transition-colors">
+              <a href="tel:+213774148612" className="flex items-center space-x-2 text-sm text-warm-gray hover:text-antique-gold transition-colors">
                 <Phone className="w-4 h-4" />
-                <span>+213 555 123 456</span>
+                <span>+213 774 148 612</span>
               </a>
-              <a href="mailto:contact@anais-fashion.com" className="flex items-center space-x-2 text-sm text-warm-gray hover:text-antique-gold transition-colors">
+              <a href="mailto:youcefneoyoucef@gmail.com" className="flex items-center space-x-2 text-sm text-warm-gray hover:text-antique-gold transition-colors">
                 <Mail className="w-4 h-4" />
-                <span>contact@anais-fashion.com</span>
+                <span>youcefneoyoucef@gmail.com</span>
               </a>
               <div className="flex items-center space-x-2 text-sm text-warm-gray">
                 <MapPin className="w-4 h-4" />
-                <span>Algiers, Algeria</span>
+                <span>Alger, Ain Nadja</span>
               </div>
             </div>
 

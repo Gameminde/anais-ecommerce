@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
 import { supabase } from '../lib/supabase';
-import { WILAYAS, validateAlgerianPhone, formatAlgerianPhone } from '../lib/constants';
+import { WILAYAS, validateAlgerianPhone, formatAlgerianPhone, calculateDeliveryFee } from '../lib/constants';
 // Select component removed - using native select
 // Analytics utils removed - using direct tracking
 
@@ -31,7 +31,22 @@ export default function CheckoutPage() {
   });
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
-  const deliveryFee = 400;
+  // Logique améliorée pour le calcul des frais de livraison
+  const selectedProvince = useMemo(() => {
+    if (selectedAddress) {
+      // Adresse sauvegardée sélectionnée
+      const addr = addresses.find(addr => addr.id === selectedAddress);
+      return addr?.province || '';
+    } else {
+      // Formulaire rapide
+      return quickForm.wilaya;
+    }
+  }, [selectedAddress, addresses, quickForm.wilaya]);
+
+  const deliveryFee = useMemo(() => {
+    return calculateDeliveryFee(selectedProvince, cartTotal);
+  }, [selectedProvince, cartTotal]);
+
   const total = cartTotal + deliveryFee;
 
   useEffect(() => {

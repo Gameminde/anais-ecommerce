@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Trash2, ShoppingBag, ArrowRight } from 'lucide-react'
 import { useCart } from '../contexts/CartContext'
 import { useAuth } from '../contexts/AuthContext'
+import { calculateDeliveryFee } from '../lib/constants'
 
 export default function CartPage() {
   const { t } = useTranslation()
@@ -10,7 +11,8 @@ export default function CartPage() {
   const { user } = useAuth()
   const { cartItems, removeFromCart, updateQuantity, cartTotal, loading } = useCart()
 
-  const deliveryFee = 400
+  // Estimation des frais de livraison (Alger par défaut pour l'estimation)
+  const deliveryFee = calculateDeliveryFee('Alger', cartTotal)
   const total = cartTotal + deliveryFee
 
   const formatPrice = (price: number) => {

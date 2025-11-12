@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { ArrowRight, Package, Sparkles, Heart, Star, ShoppingBag } from 'lucide-react'
+import { ArrowRight, Package, Sparkles, Heart, Star, ShoppingBag, Truck, MapPin, Shield, CheckCircle } from 'lucide-react'
 import { supabase, Product, GiftBox } from '../lib/supabase'
 import { motion } from 'framer-motion'
 import ScrollAnimationWrapper, { MagazinePage } from '../components/ScrollAnimationWrapper'
@@ -198,10 +198,10 @@ export default function HomePage() {
                           {product.name_en}
                         </h3>
                         <div className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3">
-                          Regular price ${product.price_dzd}
+                          Prix régulier {formatPrice(product.price_dzd)} DA
                         </div>
                         <div className="text-base sm:text-lg font-bold text-charcoal">
-                          ${product.price_dzd}
+                          {formatPrice(product.price_dzd)} DA
             </div>
                       </div>
                     </div>
@@ -288,60 +288,335 @@ export default function HomePage() {
                 {product.name_en}
               </h4>
               <div className="text-sm text-gray-600">
-                Prix: {formatPrice(product.price_dzd)} DZD
+                Prix: {formatPrice(product.price_dzd)} DA
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* Gift Boxes Section - Dynamic from Database */}
-      {giftBoxes.length > 0 && (
-        <section className="py-16 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <SplitText
-                text="coffrets cadeaux"
-                className="font-display text-3xl text-charcoal mb-4"
-                direction="left"
-                delay={0.3}
-                type="words"
-              />
-              <SplitText
-                text="idées cadeaux élégantes"
-                className="font-display text-2xl text-charcoal"
-                direction="right"
-                delay={0.8}
-                type="words"
-              />
+      {/* Collections Section - Static Images */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <SplitText
+              text="nos collections"
+              className="font-display text-3xl text-charcoal mb-4"
+              direction="left"
+              delay={0.3}
+              type="words"
+            />
+            <SplitText
+              text="découvrez nos catégories"
+              className="font-display text-2xl text-charcoal"
+              direction="right"
+              delay={0.8}
+              type="words"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Ensemble Collection */}
+            <Link
+              to="/shop?type=ensemble"
+              className="group cursor-pointer"
+            >
+              <div className="aspect-[4/5] rounded-lg overflow-hidden mb-4 relative">
+                <img
+                  src="/images/ensemble_collection.png"
+                  alt="Collection Ensembles"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  onError={(e) => {
+                    // Fallback si l'image n'existe pas
+                    e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjUwMCIgdmlld0JveD0iMCAwIDQwMCA1MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iNTAwIiBmaWxsPSIjRjNGNEY2Ii8+Cjx0ZXh0IHg9IjIwMCIgeT0iMjUwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOUI5QkE0IiBmb250LXNpemU9IjE4IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiPkVuc2VtYmxlczwvdGV4dD4KPC9zdmc+';
+                  }}
+                />
+                <div className="absolute inset-0 bg-black/20"></div>
+                <div className="absolute bottom-6 left-6 right-6 text-white">
+                  <h3 className="font-display text-xl mb-2">Ensembles</h3>
+                  <p className="text-sm text-white/90 mb-4">
+                    Collections complètes pour toutes occasions
+                  </p>
+                  <div className="flex items-center text-white font-medium hover:underline">
+                    Voir les ensembles <ArrowRight className="w-4 h-4 ml-1" />
+                  </div>
+                </div>
+              </div>
+            </Link>
+
+            {/* Maquillage Collection */}
+            <Link
+              to="/shop"
+              className="group cursor-pointer"
+            >
+              <div className="aspect-[4/5] rounded-lg overflow-hidden mb-4 relative">
+                <img
+                  src="/images/makeup_collection.png"
+                  alt="Collection Maquillage"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  onError={(e) => {
+                    // Fallback si l'image n'existe pas
+                    e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjUwMCIgdmlld0JveD0iMCAwIDQwMCA1MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iNTAwIiBmaWxsPSIjRjNGNEY2Ii8+Cjx0ZXh0IHg9IjIwMCIgeT0iMjUwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOUI5QkE0IiBmb250LXNpemU9IjE4IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiPk1hcXVpbGxhZ2U8L3RleHQ+Cjwvc3ZnPg==';
+                  }}
+                />
+                <div className="absolute inset-0 bg-black/20"></div>
+                <div className="absolute bottom-6 left-6 right-6 text-white">
+                  <h3 className="font-display text-xl mb-2">Maquillage</h3>
+                  <p className="text-sm text-white/90 mb-4">
+                    Produits de beauté haut de gamme
+                  </p>
+                  <div className="flex items-center text-white font-medium hover:underline">
+                    Voir le maquillage <ArrowRight className="w-4 h-4 ml-1" />
+                  </div>
+                </div>
+              </div>
+            </Link>
+
+            {/* Parfum Collection */}
+            <Link
+              to="/shop"
+              className="group cursor-pointer"
+            >
+              <div className="aspect-[4/5] rounded-lg overflow-hidden mb-4 relative">
+                <img
+                  src="/images/perfume_collection.png"
+                  alt="Collection Parfums"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  onError={(e) => {
+                    // Fallback si l'image n'existe pas
+                    e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjUwMCIgdmlld0JveD0iMCAwIDQwMCA1MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iNTAwIiBmaWxsPSIjRjNGNEY2Ii8+Cjx0ZXh0IHg9IjIwMCIgeT0iMjUwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOUI5QkE0IiBmb250LXNpemU9IjE4IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiPk parfums</text+Cjwvc3ZnPg==';
+                  }}
+                />
+                <div className="absolute inset-0 bg-black/20"></div>
+                <div className="absolute bottom-6 left-6 right-6 text-white">
+                  <h3 className="font-display text-xl mb-2">Parfums</h3>
+                  <p className="text-sm text-white/90 mb-4">
+                    Fragrances élégantes et intemporelles
+                  </p>
+                  <div className="flex items-center text-white font-medium hover:underline">
+                    Voir les parfums <ArrowRight className="w-4 h-4 ml-1" />
+                  </div>
+                </div>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Gift Boxes Section - Static Images */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <SplitText
+              text="coffrets cadeaux"
+              className="font-display text-3xl text-charcoal mb-4"
+              direction="left"
+              delay={0.3}
+              type="words"
+            />
+            <SplitText
+              text="idées cadeaux élégantes"
+              className="font-display text-2xl text-charcoal"
+              direction="right"
+              delay={0.8}
+              type="words"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {/* Gift Box 1 */}
+            <Link
+              to="/shop"
+              className="group cursor-pointer"
+            >
+              <div className="aspect-square rounded-lg overflow-hidden mb-4 relative bg-white shadow-md group-hover:shadow-lg transition-shadow duration-300">
+                <img
+                  src="/images/giftbox_1.png"
+                  alt="Coffret Cadeau Élégant"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  onError={(e) => {
+                    // Fallback si l'image n'existe pas
+                    e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDQwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjRjNGNEY2Ii8+Cjx0ZXh0IHg9IjIwMCIgeT0iMjAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOUI5QkE0IiBmb250LXNpemU9IjE2IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiPkNvZmZyZXQgRWzDqWdhbnQ8L3RleHQ+Cjwvc3ZnPg==';
+                  }}
+                />
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors duration-300"></div>
+                <div className="absolute bottom-4 left-4 right-4 text-center">
+                  <h4 className="font-display text-sm text-charcoal mb-1">Coffret Élégant</h4>
+                  <p className="text-xs text-gray-600">À partir de 89 000 DA</p>
+                </div>
+              </div>
+            </Link>
+
+            {/* Gift Box 2 */}
+            <Link
+              to="/shop"
+              className="group cursor-pointer"
+            >
+              <div className="aspect-square rounded-lg overflow-hidden mb-4 relative bg-white shadow-md group-hover:shadow-lg transition-shadow duration-300">
+                <img
+                  src="/images/giftbox_2.png"
+                  alt="Coffret Cadeau Luxe"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  onError={(e) => {
+                    // Fallback si l'image n'existe pas
+                    e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDQwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjRjNGNEY2Ii8+Cjx0ZXh0IHg9IjIwMCIgeT0iMjAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOUI5QkE0IiBmb250LXNpemU9IjE2IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiPkNvZmZyZXQgTHV4ZTwvdGV4dD4KPC9zdmc+';
+                  }}
+                />
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors duration-300"></div>
+                <div className="absolute bottom-4 left-4 right-4 text-center">
+                  <h4 className="font-display text-sm text-charcoal mb-1">Coffret Luxe</h4>
+                  <p className="text-xs text-gray-600">À partir de 149 000 DA</p>
+                </div>
+              </div>
+            </Link>
+
+            {/* Gift Box 3 */}
+            <Link
+              to="/shop"
+              className="group cursor-pointer"
+            >
+              <div className="aspect-square rounded-lg overflow-hidden mb-4 relative bg-white shadow-md group-hover:shadow-lg transition-shadow duration-300">
+                <img
+                  src="/images/giftbox_3.png"
+                  alt="Coffret Cadeau Romantique"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  onError={(e) => {
+                    // Fallback si l'image n'existe pas
+                    e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDQwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjRjNGNEY2Ii8+Cjx0ZXh0IHg9IjIwMCIgeT0iMjAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOUI5QkE0IiBmb250LXNpemU9IjE2IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiPkNvZmZyZXQgUm9tYW50aXF1ZTwvdGV4dD4KPC9zdmc+';
+                  }}
+                />
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors duration-300"></div>
+                <div className="absolute bottom-4 left-4 right-4 text-center">
+                  <h4 className="font-display text-sm text-charcoal mb-1">Coffret Romantique</h4>
+                  <p className="text-xs text-gray-600">À partir de 119 000 DA</p>
+                </div>
+              </div>
+            </Link>
+
+            {/* Gift Box 4 */}
+            <Link
+              to="/shop"
+              className="group cursor-pointer"
+            >
+              <div className="aspect-square rounded-lg overflow-hidden mb-4 relative bg-white shadow-md group-hover:shadow-lg transition-shadow duration-300">
+                <img
+                  src="/images/giftbox_4.png"
+                  alt="Coffret Cadeau Personnalisé"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  onError={(e) => {
+                    // Fallback si l'image n'existe pas
+                    e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDQwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjRjNGNEY2Ii8+Cjx0ZXh0IHg9IjIwMCIgeT0iMjAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOUI5QkE0IiBmb250LXNpemU9IjE2IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiPkNvZmZyZXQgUGVyc29ubmFsaXPDqTwvdGV4dD4KPC9zdmc+';
+                  }}
+                />
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors duration-300"></div>
+                <div className="absolute bottom-4 left-4 right-4 text-center">
+                  <h4 className="font-display text-sm text-charcoal mb-1">Coffret Personnalisé</h4>
+                  <p className="text-xs text-gray-600">À partir de 99 000 DA</p>
+                </div>
+              </div>
+            </Link>
+          </div>
+
+          <div className="text-center mt-8">
+            <Link
+              to="/shop"
+              className="inline-flex items-center px-6 py-3 bg-charcoal text-white font-medium rounded-lg hover:bg-charcoal/90 transition-colors duration-300"
+            >
+              Voir tous les coffrets <ArrowRight className="w-4 h-4 ml-2" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+
+      {/* Livraison Section - Attractive */}
+      <section className="py-16 bg-gradient-to-br from-antique-gold/10 to-anais-taupe/5">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="font-display text-3xl text-charcoal mb-4">
+              🚚 Livraison à Domicile Rapide & Sécurisée
+            </h2>
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+              Recevez vos ensembles ANAIS directement chez vous avec notre service de livraison à domicile premium
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            {/* Alger */}
+            <div className="bg-white rounded-xl shadow-lg p-8 text-center transform hover:scale-105 transition-all duration-300 border border-antique-gold/20">
+              <div className="w-16 h-16 bg-antique-gold/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Truck className="w-8 h-8 text-antique-gold" />
+              </div>
+              <h3 className="font-display text-xl text-charcoal mb-2">Alger</h3>
+              <div className="text-3xl font-bold text-antique-gold mb-2">500 DA</div>
+              <p className="text-gray-600 text-sm">
+                Livraison à domicile express en 24-48h
+              </p>
+              <div className="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">
+                <p className="text-green-700 text-sm font-medium">
+                  ✅ <span className="font-bold">Prix fixe : 500 DA</span><br/>
+                  Livraison express en 24-48h
+                </p>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {giftBoxes.map((box, index) => (
-                <Link
-                  key={box.id}
-                  to="/shop"
-                  className="group cursor-pointer"
-                >
-                  <div className="aspect-[4/5] bg-gradient-to-br from-rose-100 to-pink-200 rounded-lg overflow-hidden mb-4 relative">
-                    <div className="absolute inset-0 bg-black/20"></div>
-                    <div className="absolute bottom-6 left-6 right-6 text-white">
-                      <h3 className="font-display text-xl mb-2">{box.name_en}</h3>
-                      <p className="text-sm text-white/90 mb-4">
-                        {box.description_en || 'Coffret cadeau élégant'}
-                      </p>
-                      <div className="flex items-center text-white font-medium hover:underline">
-                        Voir les coffrets <ArrowRight className="w-4 h-4 ml-1" />
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
+            {/* Hors Wilaya */}
+            <div className="bg-white rounded-xl shadow-lg p-8 text-center transform hover:scale-105 transition-all duration-300 border border-anais-taupe/20">
+              <div className="w-16 h-16 bg-anais-taupe/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <MapPin className="w-8 h-8 text-anais-taupe" />
+              </div>
+              <h3 className="font-display text-xl text-charcoal mb-2">Hors Wilaya</h3>
+              <div className="text-3xl font-bold text-anais-taupe mb-2">800 DA</div>
+              <p className="text-gray-600 text-sm">
+                Livraison à domicile partout en Algérie
+              </p>
+              <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                <p className="text-blue-700 text-sm font-medium">
+                  📦 Service fiable et sécurisé<br/>
+                  <span className="text-xs">Réduction à 600 DA dès 5 000 DA d'achat !</span>
+                </p>
+              </div>
+            </div>
+
+            {/* Avantages */}
+            <div className="bg-white rounded-xl shadow-lg p-8 text-center transform hover:scale-105 transition-all duration-300 border border-deep-plum/20">
+              <div className="w-16 h-16 bg-deep-plum/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Shield className="w-8 h-8 text-deep-plum" />
+              </div>
+              <h3 className="font-display text-xl text-charcoal mb-2">Vos Avantages</h3>
+              <div className="space-y-2 text-left">
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <span className="text-gray-700 text-sm">Paiement à la livraison</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <span className="text-gray-700 text-sm">Suivi de commande</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <span className="text-gray-700 text-sm">Emballage cadeau gratuit</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <span className="text-gray-700 text-sm">Service client 7j/7</span>
+                </div>
+              </div>
             </div>
           </div>
-        </section>
-      )}
 
+          {/* Call to Action pour livraison */}
+          <div className="text-center">
+            <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-antique-gold to-anais-taupe text-white px-8 py-4 rounded-lg font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300">
+              <Truck className="w-6 h-6" />
+              <span>Livraison à domicile gratuite à partir de 10 000 DA !</span>
+            </div>
+            <p className="text-gray-600 mt-4 text-sm">
+              *Offre valable sur tout le territoire algérien - Livraison à domicile garantie
+            </p>
+          </div>
+        </div>
+      </section>
 
       {/* Call to Action Section */}
       <section className="py-16 bg-white">
@@ -368,89 +643,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Sélection ANAIS */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <SplitText
-              text="Sélection ANAIS"
-              className="font-display text-3xl text-charcoal mb-4"
-              direction="left"
-              delay={0.3}
-              type="words"
-            />
-            <SplitText
-              text="Tendances & Élégance"
-              className="font-display text-2xl text-charcoal"
-              direction="right"
-              delay={0.8}
-              type="words"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Inspiration items - Dynamic from Database */}
-          {featuredEnsembles.length > 0 ? (
-            featuredEnsembles.slice(0, 6).map((product, index) => (
-              <div key={product.id} className="bg-white rounded-lg overflow-hidden shadow-md group cursor-pointer">
-                <Link to={`/product/${product.id}`}>
-                  <div className="aspect-square bg-gray-100 relative overflow-hidden">
-                    {product.product_images && product.product_images.length > 0 ? (
-                      <img
-                        src={product.product_images.find(img => img.is_primary)?.image_url ||
-                             product.product_images[0].image_url}
-                        alt={product.name_en}
-                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
-                        crossOrigin="anonymous"
-                        referrerPolicy="no-referrer"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-anais-taupe/10 to-anais-gold/10">
-                        <Sparkles className="w-12 h-12 text-anais-taupe" />
-                      </div>
-                    )}
-
-                    {/* Color tag */}
-                    <div className="absolute top-2 left-2">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        index % 4 === 0 ? 'bg-black text-white' :
-                        index % 4 === 1 ? 'bg-blue-600 text-white' :
-                        index % 4 === 2 ? 'bg-red-500 text-white' :
-                        'bg-pink-500 text-white'
-                      }`}>
-                        #{index % 4 === 0 ? 'black' :
-                           index % 4 === 1 ? 'navy' :
-                           index % 4 === 2 ? 'red' :
-                           'pink'}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="p-4 text-center">
-                    <h4 className="font-display text-sm text-charcoal mb-2 line-clamp-2">
-                      {product.name_en}
-                    </h4>
-                    <div className="text-sm text-gray-600">
-                      Prix: {formatPrice(product.price_dzd)} DZD
-                    </div>
-                  </div>
-                </Link>
-              </div>
-            ))
-          ) : (
-            /* Fallback loading state */
-            [...Array(6)].map((_, index) => (
-              <div key={index} className="bg-white rounded-lg overflow-hidden shadow-md animate-pulse">
-                <div className="aspect-square bg-gray-200"></div>
-                <div className="p-4 text-center">
-                  <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                  <div className="h-3 bg-gray-200 rounded"></div>
-                </div>
-              </div>
-            ))
-          )}
-          </div>
-        </div>
-      </section>
 
 
       {/* À propos ANAIS */}

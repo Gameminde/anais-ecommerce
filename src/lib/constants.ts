@@ -90,3 +90,20 @@ export const formatAlgerianPhone = (phone: string): string => {
   // Sinon retourner tel quel
   return phone;
 };
+
+/**
+ * Calcule les frais de livraison selon les règles suivantes :
+ * - Alger : toujours 500 DA (pas de réduction)
+ * - Hors wilaya : 800 DA de base, devient 600 DA si achat > 5000 DA
+ */
+export const calculateDeliveryFee = (province: string, cartTotal: number): number => {
+  const isAlger = province?.toLowerCase().includes('alger') || province === '16';
+
+  if (isAlger) {
+    // Alger : toujours 500 DA, peu importe le montant
+    return 500;
+  } else {
+    // Hors wilaya : 800 DA de base, 600 DA si achat > 5000 DA
+    return cartTotal > 5000 ? 600 : 800;
+  }
+};

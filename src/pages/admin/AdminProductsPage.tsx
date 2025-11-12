@@ -427,7 +427,84 @@ export default function AdminProductsPage() {
             </div>
           ) : (
             <>
-              <div className="overflow-x-auto">
+              {/* Mobile Products View - Cards */}
+              <div className="block md:hidden">
+                <div className="grid gap-4">
+                  {products.map((product) => (
+                    <div key={product.id} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
+                      <div className="flex items-start space-x-4">
+                        {/* Product Image */}
+                        <div className="flex-shrink-0">
+                          <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
+                            {product.product_images && product.product_images.length > 0 ? (
+                              <img
+                                src={product.product_images.find(img => img.is_primary)?.image_url ||
+                                     product.product_images[0]?.image_url}
+                                alt={product.name_en}
+                                className="w-full h-full object-cover rounded-lg"
+                              />
+                            ) : (
+                              <span className="text-gray-400 text-xs">📦</span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Product Info */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1 min-w-0">
+                              <h3 className="text-sm font-medium text-gray-900 truncate">
+                                {product.name_en}
+                              </h3>
+                              <p className="text-xs text-gray-500 truncate">
+                                {product.sku && `SKU: ${product.sku}`}
+                              </p>
+                              <p className="text-sm font-bold text-gray-900 mt-1">
+                                {new Intl.NumberFormat('fr-DZ', {
+                                  style: 'currency',
+                                  currency: 'DZD'
+                                }).format(product.price_dzd)}
+                              </p>
+                            </div>
+                            <div className="flex flex-col items-end space-y-2 ml-4">
+                              <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                product.is_active
+                                  ? 'bg-green-100 text-green-800'
+                                  : 'bg-red-100 text-red-800'
+                              }`}>
+                                {product.is_active ? 'Actif' : 'Inactif'}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="mt-3 flex space-x-2">
+                            <button
+                              onClick={() => handleEditProduct(product)}
+                              className="flex-1 min-h-[40px] inline-flex items-center justify-center px-3 py-2 border border-gray-300 text-xs font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+                            >
+                              ✏️ Modifier
+                            </button>
+                            <button
+                              onClick={() => handleToggleActive(product)}
+                              className={`flex-1 min-h-[40px] inline-flex items-center justify-center px-3 py-2 text-xs font-medium rounded-lg transition-colors ${
+                                product.is_active
+                                  ? 'border-red-300 text-red-700 bg-white hover:bg-red-50'
+                                  : 'border-green-300 text-green-700 bg-white hover:bg-green-50'
+                              }`}
+                            >
+                              {product.is_active ? '🚫 Désactiver' : '✅ Activer'}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Desktop Products View - Table */}
+              <div className="hidden md:block">
+                <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-charcoal">
                     <tr>
@@ -533,6 +610,7 @@ export default function AdminProductsPage() {
                     ))}
                   </tbody>
                 </table>
+              </div>
               </div>
 
               {/* Pagination */}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ShoppingCart, Check, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react'
@@ -24,11 +24,7 @@ export default function ProductDetailPage() {
   const [addedToCart, setAddedToCart] = useState(false)
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
 
-  useEffect(() => {
-    if (id) fetchProduct()
-  }, [id])
-
-  const fetchProduct = async () => {
+  const fetchProduct = useCallback(async () => {
     setLoading(true)
     try {
       console.log('🔍 ProductDetailPage: Fetching product with images for ID:', id)
@@ -80,7 +76,16 @@ export default function ProductDetailPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [id])
+
+  useEffect(() => {
+    if (id) fetchProduct()
+  }, [id, fetchProduct])
+
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
 
   const handleAddToCart = async () => {
     if (!user) {
@@ -248,11 +253,11 @@ export default function ProductDetailPage() {
             <div className="mb-8">
               <div className="flex items-baseline space-x-4">
                 <span className="font-display text-4xl text-antique-gold">
-                  {formatPrice(product.sale_price_dzd || product.price_dzd)} DZD
+                  {formatPrice(product.sale_price_dzd || product.price_dzd)} DA
                 </span>
                 {product.sale_price_dzd && (
                   <span className="font-body text-xl text-warm-gray line-through">
-                    {formatPrice(product.price_dzd)} DZD
+                    {formatPrice(product.price_dzd)} DA
                   </span>
                 )}
               </div>

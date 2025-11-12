@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import { ShoppingCart, User, Menu, X, Globe, Home, ShoppingBag, Package, Heart, Shield } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import { useCart } from '../contexts/CartContext'
@@ -9,50 +10,6 @@ import { motion, useScroll, useTransform } from 'framer-motion'
 import SplitText from './SplitText'
 import ScrollAnimationWrapper from './ScrollAnimationWrapper'
 
-// Mobile Bottom Navigation Component
-function MobileBottomNav() {
-  const location = useLocation()
-  const { cartCount } = useCart()
-  const { user } = useAuth()
-  const { isAdmin } = useAdmin()
-
-  const navItems = [
-    { icon: Home, label: 'Home', path: '/', active: location.pathname === '/' },
-    { icon: ShoppingBag, label: 'Shop', path: '/shop', active: location.pathname === '/shop' || location.pathname.startsWith('/shop') },
-    { icon: Package, label: 'Boxes', path: '/gift-boxes', active: location.pathname === '/gift-boxes' },
-    { icon: ShoppingCart, label: 'Cart', path: '/cart', active: location.pathname === '/cart', badge: cartCount },
-    { icon: User, label: 'Account', path: user ? '/account' : '/login', active: location.pathname === '/account' || location.pathname === '/login' },
-    ...(isAdmin ? [{ icon: Shield, label: 'Admin', path: '/admin', active: location.pathname.startsWith('/admin') }] : [])
-  ]
-
-  return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 safe-area-inset-bottom">
-      <div className="grid grid-cols-5 h-16">
-        {navItems.map(({ icon: Icon, label, path, active, badge }) => (
-          <Link
-            key={path}
-            to={path}
-            className={`flex flex-col items-center justify-center py-2 px-1 relative transition-colors duration-200 ${
-              active
-                ? 'text-anais-taupe'
-                : 'text-gray-500 hover:text-anais-taupe'
-            }`}
-          >
-            <div className="relative">
-              <Icon className="w-5 h-5 mb-1" />
-              {badge && badge > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold">
-                  {badge > 9 ? '9+' : badge}
-                </span>
-              )}
-            </div>
-            <span className="text-xs font-medium">{label}</span>
-          </Link>
-        ))}
-      </div>
-    </nav>
-  )
-}
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -322,8 +279,8 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile Bottom Navigation */}
-      <MobileBottomNav />
     </motion.header>
   )
+
+  
 }
