@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { supabase } from '../../lib/supabase';
 
@@ -147,11 +148,11 @@ export default function AdminOrdersPage() {
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {orders.map((order) => (
-                      <tr key={order.id} className="hover:bg-gray-50">
+                      <tr key={order.id} className="hover:bg-gray-50 cursor-pointer">
                         <td className="px-6 py-4">
-                          <div className="text-sm font-bold text-gray-900">
+                          <Link to={`/admin/orders/${order.id}`} className="text-sm font-bold text-gray-900 hover:text-anais-gold">
                             #{order.order_number || order.id.slice(-8)}
-                          </div>
+                          </Link>
                         </td>
                         <td className="px-6 py-4">
                           <div className="text-sm font-medium text-gray-900">
