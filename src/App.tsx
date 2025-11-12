@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { Suspense, lazy, useCallback, useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { AuthProvider } from './contexts/AuthContext'
 import { CartProvider } from './contexts/CartContext'
 import { useMobileGestures } from './hooks/useMobileGestures'
@@ -13,33 +13,26 @@ import MobileBottomNav from './components/MobileBottomNav'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { AdminRoute } from './components/admin/AdminRoute'
 
-// Lazy load pages for better performance
-const HomePage = lazy(() => import('./pages/HomePage'))
-const ShopPage = lazy(() => import('./pages/ShopPage'))
-const GiftBoxesPage = lazy(() => import('./pages/GiftBoxesPage'))
-const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage'))
-const CartPage = lazy(() => import('./pages/CartPage'))
-const LoginPage = lazy(() => import('./pages/LoginPage'))
-const AboutPage = lazy(() => import('./pages/AboutPage'))
-const AuthCallbackPage = lazy(() => import('./pages/AuthCallbackPage'))
-const CheckoutPage = lazy(() => import('./pages/CheckoutPage'))
-const AccountPage = lazy(() => import('./pages/AccountPage'))
-const OrderHistoryPage = lazy(() => import('./pages/OrderHistoryPage'))
-const OrderSuccessPage = lazy(() => import('./pages/OrderSuccessPage'))
+// Import pages directly (no lazy loading for now to avoid bundling issues)
+import HomePage from './pages/HomePage'
+import ShopPage from './pages/ShopPage'
+import GiftBoxesPage from './pages/GiftBoxesPage'
+import ProductDetailPage from './pages/ProductDetailPage'
+import CartPage from './pages/CartPage'
+import LoginPage from './pages/LoginPage'
+import AboutPage from './pages/AboutPage'
+import AuthCallbackPage from './pages/AuthCallbackPage'
+import CheckoutPage from './pages/CheckoutPage'
+import AccountPage from './pages/AccountPage'
+import OrderHistoryPage from './pages/OrderHistoryPage'
+import OrderSuccessPage from './pages/OrderSuccessPage'
 
-// Lazy load admin pages
-const AdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage'))
-const AdminProductsPage = lazy(() => import('./pages/admin/AdminProductsPage'))
-const AdminCategoriesPage = lazy(() => import('./pages/admin/AdminCategoriesPage'))
-const AdminOrdersPage = lazy(() => import('./pages/admin/AdminOrdersPage'))
-const AdminOrderDetailsPage = lazy(() => import('./pages/admin/AdminOrderDetailsPage'))
-
-// Loading component
-const LoadingSpinner = () => (
-  <div className="flex items-center justify-center min-h-screen">
-    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-anais-gold"></div>
-  </div>
-)
+// Import admin pages directly
+import AdminDashboardPage from './pages/admin/AdminDashboardPage'
+import AdminProductsPage from './pages/admin/AdminProductsPage'
+import AdminCategoriesPage from './pages/admin/AdminCategoriesPage'
+import AdminOrdersPage from './pages/admin/AdminOrdersPage'
+import AdminOrderDetailsPage from './pages/admin/AdminOrderDetailsPage'
 
 function App() {
   const handlePullRefresh = useCallback(() => {
@@ -77,29 +70,27 @@ function App() {
 
             <Header />
             <main className="flex-1">
-              <Suspense fallback={<LoadingSpinner />}>
-                <Routes>
-                  <Route path="/" element={<HomePage />} />
-                  <Route path="/shop" element={<ShopPage />} />
-                  <Route path="/product/:id" element={<ProductDetailPage />} />
-                  <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
-                  <Route path="/login" element={<LoginPage />} />
-                  <Route path="/about" element={<AboutPage />} />
-                  <Route path="/gift-boxes" element={<GiftBoxesPage />} />
-                  <Route path="/auth/callback" element={<AuthCallbackPage />} />
-                  <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
-                  <Route path="/account" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
-                  <Route path="/account/orders" element={<ProtectedRoute><OrderHistoryPage /></ProtectedRoute>} />
-                  <Route path="/order-success/:id" element={<OrderSuccessPage />} />
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/shop" element={<ShopPage />} />
+                <Route path="/product/:id" element={<ProductDetailPage />} />
+                <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/gift-boxes" element={<GiftBoxesPage />} />
+                <Route path="/auth/callback" element={<AuthCallbackPage />} />
+                <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
+                <Route path="/account" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
+                <Route path="/account/orders" element={<ProtectedRoute><OrderHistoryPage /></ProtectedRoute>} />
+                <Route path="/order-success/:id" element={<OrderSuccessPage />} />
 
-                  {/* Admin Routes */}
-                  <Route path="/admin" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />
-                  <Route path="/admin/products" element={<AdminRoute><AdminProductsPage /></AdminRoute>} />
-                  <Route path="/admin/categories" element={<AdminRoute><AdminCategoriesPage /></AdminRoute>} />
-                  <Route path="/admin/orders" element={<AdminRoute><AdminOrdersPage /></AdminRoute>} />
-                  <Route path="/admin/orders/:id" element={<AdminRoute><AdminOrderDetailsPage /></AdminRoute>} />
-                </Routes>
-              </Suspense>
+                {/* Admin Routes */}
+                <Route path="/admin" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />
+                <Route path="/admin/products" element={<AdminRoute><AdminProductsPage /></AdminRoute>} />
+                <Route path="/admin/categories" element={<AdminRoute><AdminCategoriesPage /></AdminRoute>} />
+                <Route path="/admin/orders" element={<AdminRoute><AdminOrdersPage /></AdminRoute>} />
+                <Route path="/admin/orders/:id" element={<AdminRoute><AdminOrderDetailsPage /></AdminRoute>} />
+              </Routes>
             </main>
             <Footer />
           </div>
