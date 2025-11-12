@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import { useCart } from '../contexts/CartContext'
 import { useAdmin } from '../hooks/useAdmin'
-// import { motion, useScroll, useTransform } from 'framer-motion' // Temporarily disabled due to React conflicts
 import SplitText from './SplitText'
 import ScrollAnimationWrapper from './ScrollAnimationWrapper'
 
@@ -60,11 +59,11 @@ export default function Header() {
             <SplitText
               text="ANAIS"
               className="font-display text-xl sm:text-2xl font-bold text-white tracking-wider drop-shadow-lg"
-              direction="right"
-              delay={0.5}
-              duration={0.8}
-              staggerChildren={0.1}
-              type="chars"
+              
+              
+              
+              
+              
             />
           </Link>
 

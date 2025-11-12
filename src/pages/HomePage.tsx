@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ArrowRight, Package, Sparkles, Heart, Star, ShoppingBag, Truck, MapPin, Shield, CheckCircle } from 'lucide-react'
 import { supabase, Product, GiftBox } from '../lib/supabase'
-// import { motion } from 'framer-motion' // Temporarily disabled for performance
 import ScrollAnimationWrapper, { MagazinePage } from '../components/ScrollAnimationWrapper'
 import SplitText from '../components/SplitText'
 // import OptimizedImage from '../components/OptimizedImage' // Temporarily disabled
@@ -107,11 +106,6 @@ export default function HomePage() {
             <SplitText
               text="ANAIS"
               className="font-display text-4xl sm:text-6xl md:text-8xl lg:text-9xl xl:text-[12rem] mb-2 sm:mb-4 tracking-wider drop-shadow-lg"
-              direction="right"
-              delay={0.5}
-              duration={1.2}
-              staggerChildren={0.08}
-              type="chars"
             />
 
             <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-light drop-shadow-lg max-w-xs sm:max-w-sm md:max-w-none">
@@ -134,9 +128,9 @@ export default function HomePage() {
           <SplitText
             text="Our Bestseller"
             className="font-display text-2xl sm:text-3xl md:text-4xl text-center text-charcoal mb-8 sm:mb-12"
-            direction="up"
-            delay={0.3}
-            type="words"
+            
+            
+            
           />
 
           {loading ? (
@@ -220,9 +214,9 @@ export default function HomePage() {
             <SplitText
               text="nos catégories"
               className="font-display text-3xl text-center text-charcoal mb-12"
-              direction="up"
-              delay={0.3}
-              type="words"
+              
+              
+              
             />
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -302,16 +296,16 @@ export default function HomePage() {
             <SplitText
               text="nos collections"
               className="font-display text-3xl text-charcoal mb-4"
-              direction="left"
-              delay={0.3}
-              type="words"
+              
+              
+              
             />
             <SplitText
               text="découvrez nos catégories"
               className="font-display text-2xl text-charcoal"
-              direction="right"
-              delay={0.8}
-              type="words"
+              
+              
+              
             />
           </div>
 
@@ -413,16 +407,16 @@ export default function HomePage() {
             <SplitText
               text="coffrets cadeaux"
               className="font-display text-3xl text-charcoal mb-4"
-              direction="left"
-              delay={0.3}
-              type="words"
+              
+              
+              
             />
             <SplitText
               text="idées cadeaux élégantes"
               className="font-display text-2xl text-charcoal"
-              direction="right"
-              delay={0.8}
-              type="words"
+              
+              
+              
             />
           </div>
 
@@ -628,9 +622,9 @@ export default function HomePage() {
             <SplitText
               text="prêt à découvrir notre collection ?"
               className="font-display text-3xl text-charcoal mb-6"
-              direction="up"
-              delay={0.3}
-              type="words"
+              
+              
+              
             />
             <p className="text-gray-600 mb-8 text-lg">
               Explorez nos ensembles modernes et élégants, parfaits pour toutes les occasions.
@@ -655,10 +649,10 @@ export default function HomePage() {
             <SplitText
               text="ANAIS incarne l'élégance moderne de la femme algérienne. Chaque pièce est conçue pour célébrer la grâce, la force et la beauté naturelle de nos femmes."
               className="font-body text-lg max-w-3xl mx-auto mb-8"
-              direction="up"
-              delay={0.3}
-              staggerChildren={0.02}
-              type="words"
+              
+              
+              
+              
             />
           </blockquote>
 
@@ -682,16 +676,16 @@ export default function HomePage() {
             <SplitText
               text="restez informé"
               className="font-display text-2xl text-charcoal mb-4"
-              direction="up"
-              delay={0.3}
-              type="words"
+              
+              
+              
             />
             <p className="text-gray-600 mb-8">
               Recevez nos dernières nouveautés et offres spéciales
             </p>
             <div className="flex gap-2">
               <input
-                type="email"
+                
                 placeholder="Votre email"
                 className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-anais-taupe"
               />
